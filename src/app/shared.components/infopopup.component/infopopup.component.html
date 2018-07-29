@@ -1,0 +1,13 @@
+﻿<div #info class="panel panel-default ui-widget-content" [ngStyle]="{ 'display': (visible ? '' : 'none') }">
+	<div #popupHeader class="panel-heading">
+		<span>{{header}}</span>
+		<a href="#" class="pull-right" (click)="onCloseClicked($event)">
+            <span class="CloseInfoPopup">
+                <i class="fa fa-times-circle" aria-hidden="true"></i>
+            </span>
+        </a>
+	</div>
+	<div class="panel-body" >
+        <div [innerHTML]="body"></div>
+	</div>
+</div>

@@ -1,0 +1,12 @@
+D:\Barkat\SupplyChain\api\SCMS.DB\bin\Debug\SCMS.DB.dll.config
+D:\Barkat\SupplyChain\api\SCMS.DB\bin\Debug\SCMS.DB.dll
+D:\Barkat\SupplyChain\api\SCMS.DB\bin\Debug\SCMS.DB.pdb
+D:\Barkat\SupplyChain\api\SCMS.DB\bin\Debug\EntityFramework.dll
+D:\Barkat\SupplyChain\api\SCMS.DB\bin\Debug\EntityFramework.SqlServer.dll
+D:\Barkat\SupplyChain\api\SCMS.DB\bin\Debug\EntityFramework.xml
+D:\Barkat\SupplyChain\api\SCMS.DB\bin\Debug\EntityFramework.SqlServer.xml
+D:\Barkat\SupplyChain\api\SCMS.DB\obj\Debug\SCMS.DB.csprojAssemblyReference.cache
+D:\Barkat\SupplyChain\api\SCMS.DB\obj\Debug\SCMS.DB.csproj.CoreCompileInputs.cache
+D:\Barkat\SupplyChain\api\SCMS.DB\obj\Debug\SCMS.DB.csproj.CopyComplete
+D:\Barkat\SupplyChain\api\SCMS.DB\obj\Debug\SCMS.DB.dll
+D:\Barkat\SupplyChain\api\SCMS.DB\obj\Debug\SCMS.DB.pdb

@@ -1,0 +1,31 @@
+<header></header>
+<form [formGroup]="frmItem">
+    <div class="container">
+        <div class="panel panel-primary">
+            <div class="panel-heading">Manage Item</div>
+            <div class="panel-body">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label for="itemDesc">Item Description</label>
+                        <input class="form-control" formControlName="itemDescription">
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-6">
+                    <div class="form-group">
+                        <label for="cost">Item Cost</label>
+                        <input class="form-control" formControlName="cost">
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-6">
+                    <div class="form-group">
+                        <label for="price">Item Price</label>
+                        <input class="form-control" formControlName="price">
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <button type="submit" class="pull-right btn btn-primary" (click)="onSave()">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
