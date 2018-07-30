@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, Output, OnInit, AfterContentInit, OnCha
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ToastrService } from 'ngx-toastr';
 import { DropdownComponent } from '../../dropdown.component/dropdown.component';
-import { Global } from '../../global';
+import { Global } from '../../shared.global';
 
 @Component({
     selector: 'ng-table',
@@ -23,7 +23,6 @@ export class NgTableComponent implements OnInit, OnChanges {
     @Input() idColumn: string = '';
     @Input() showFilterRow: boolean = false;
     @Input() showTotals: boolean = false;
-    @Input() sortingInput: any;
     @Input() validationColor: string;
     @Input() rowDetailComponents: Component[];
     @Input() subFormColSpan: number;
@@ -71,12 +70,15 @@ export class NgTableComponent implements OnInit, OnChanges {
     @Output() decreaseSortOrderClicked: EventEmitter<string> = new EventEmitter();
     @Output() linkClicked: EventEmitter<any> = new EventEmitter();
     @Output() headerChecked: EventEmitter<any> = new EventEmitter();
-	@Output() cellValueChanged: EventEmitter<any> = new EventEmitter();
-	@Output() blur: EventEmitter<any> = new EventEmitter();
+    @Output() cellValueChanged: EventEmitter<any> = new EventEmitter();
+    @Output() blur: EventEmitter<any> = new EventEmitter();
 
     @ViewChildren('container', { read: ViewContainerRef }) containers: QueryList<ViewContainerRef>;
 
     public totals: any[] = [];
+
+    private _columns: Array<any> = [];
+    private _config: any = {};
 
     dataRows: any[] = [];
     selectedIds: any[] = [];
@@ -104,12 +106,12 @@ export class NgTableComponent implements OnInit, OnChanges {
     ngOnChanges(): void {
         let str1: string;
         let str2: string;
-        let i: number;
         let n: number;
         let count: number;
         let pos: number;
-        let object: {}
+        let object: {};
         let columns: any[];
+        //let col: any;
         let evalFormula: string;
 
         this.calcFormulaFields = [];
@@ -128,22 +130,22 @@ export class NgTableComponent implements OnInit, OnChanges {
 
         this.totals = [];
         this.hiddenColumns = 0;
-        let col: any;
+        //let col: any;
         
         //console.log('addButtonSpan: ' + this.addButtonSpan);
         //console.log('hiddenColumns: ' + this.hiddenColumns);
 
-        this.columns.forEach((col, colIndex) => {
+        this.columns.forEach((col1, colIndex) => {
 
             /***** Set Column Headers *****/
 
-            level = col.level ? col.level : 0;
+            level = col1.level ? col1.level : 0;
 
             while (!this.headers[level]) {
                 this.headers.push([]);
             }
 
-            this.headers[level].push(col);
+            this.headers[level].push(col1);
 
             /***** Initialize Cell Validation Matrix *****/
 
@@ -152,9 +154,9 @@ export class NgTableComponent implements OnInit, OnChanges {
 
             /***** Initialize ValidateFromColumns List *****/
 
-            if (col.validateFromColumn > 0) {
-                if (!this.columns[col.validateFromColumn].validationColumns)
-                    this.columns[col.validateFromColumn].validationColumns = [];
+            if (col1.validateFromColumn > 0) {
+                if (!this.columns[col1.validateFromColumn].validationColumns)
+                    this.columns[col1.validateFromColumn].validationColumns = [];
                 this.columns[col.validateFromColumn].validationColumns.push(colIndex);
             }
 
@@ -165,14 +167,14 @@ export class NgTableComponent implements OnInit, OnChanges {
 
             /***** Find Evaluated Validation Formula *****/
 
-            if (col.calcFormula) {
-                evalFormula = this.evaluateFormula(col.calcFormula);
-                this.calcFormulaFields.push({ col: colIndex, formula: col.calcFormula, evalFormula: evalFormula, name: col.name });
+            if (col1.calcFormula) {
+                evalFormula = this.evaluateFormula(col1.calcFormula);
+                this.calcFormulaFields.push({ col: colIndex, formula: col1.calcFormula, evalFormula: evalFormula, name: col1.name });
             }
 
-            if (col.validationFormula) {
-                evalFormula = this.evaluateFormula('[' + colIndex + '] ' + col.validationFormula);
-                this.validationFormulaFields.push({ col: colIndex, formula: col.validationFormula, evalFormula: evalFormula, name: col.name });
+            if (col1.validationFormula) {
+                evalFormula = this.evaluateFormula('[' + colIndex + '] ' + col1.validationFormula);
+                this.validationFormulaFields.push({ col: colIndex, formula: col1.validationFormula, evalFormula: evalFormula, name: col1.name });
             }
         });
 
@@ -183,6 +185,8 @@ export class NgTableComponent implements OnInit, OnChanges {
 
         this.renderRows();
 
+        let col: any;
+        this.addButtonSpan = this.columns.length;
         for (let i = 0; i < this.columns.length; i++) {
             col = this.columns[i];
             col.validationColumns = [];
@@ -193,7 +197,11 @@ export class NgTableComponent implements OnInit, OnChanges {
                 labelPrinted = true;
                 break;
             }
-        };
+        }
+        console.log('addButtonSpan: ' + this.addButtonSpan);
+        console.log('showTotals: ' + this.showTotals);
+        console.log('allowAddition: ' + this.allowAddition);
+
     }
 
     evaluateFormula(evalFormula: string): string {
@@ -243,9 +251,6 @@ export class NgTableComponent implements OnInit, OnChanges {
         });
         this.onChangeTable(this.config);
     }
-
-    private _columns: Array<any> = [];
-    private _config: any = {};
 
     public sanitize(html: string): SafeHtml {
         return this.sanitizer.bypassSecurityTrustHtml(html);
@@ -303,7 +308,7 @@ export class NgTableComponent implements OnInit, OnChanges {
                 if (c.checked) columns.push(c.name);
             });
             
-            let obj = { column, columns }
+            let obj = { column, columns };
             this.headerChecked.emit(obj);
 
             $event.stopPropagation();
@@ -321,13 +326,13 @@ export class NgTableComponent implements OnInit, OnChanges {
         if (this.allowMultiSelect) {
             if (event.ctrlKey) {
                 this.dataRows.forEach(r => {
-                    if (r.id == (row[this.idColumn] || row.id))
+                    if (r.id === (row[this.idColumn] || row.id))
                         if (r.className) {
                             this.selectedIds = this.selectedIds.filter(e => e !== (row[this.idColumn] || row.id));
                             r.className = '';
                         }
                         else {
-                            this.selectedIds.push(row[this.idColumn] || row.id)
+                            this.selectedIds.push(row[this.idColumn] || row.id);
                             r.className = 'selected';
                         }
                 });
@@ -362,8 +367,8 @@ export class NgTableComponent implements OnInit, OnChanges {
 
         this.dataRows.forEach((row: any) => {
             if (row.id === (row[this.idColumn] || id)) {
-                row.checked = (row.checked == 'checked' ? '' : 'checked');
-                this.checkedId = (row.checked == 'checked' ? id : '');
+                row.checked = (row.checked === 'checked' ? '' : 'checked');
+                this.checkedId = (row.checked === 'checked' ? id : '');
             }
             else {
                 row.checked = '';
@@ -371,12 +376,12 @@ export class NgTableComponent implements OnInit, OnChanges {
         });
 
         if (this.checkedId !== '') {
-            if (this.checkedId != (this.dataRows[this.idColumn] || this.dataRows[0].id))
+            if (this.checkedId !== (this.dataRows[this.idColumn] || this.dataRows[0].id))
                 this.upKeyHidden = false;
-            if (this.checkedId != (this.dataRows[this.rows.length - 1][this.idColumn] || this.dataRows[this.dataRows.length - 1].id))
+            if (this.checkedId !== (this.dataRows[this.rows.length - 1][this.idColumn] || this.dataRows[this.dataRows.length - 1].id))
                 this.downKeyHidden = false;
         }
-    };
+    }
 
     onSwitchChanged(row: any, column: any): void {
         row[column] = !row[column];
@@ -384,10 +389,10 @@ export class NgTableComponent implements OnInit, OnChanges {
     }
 
     renderRows(insertSubForms: boolean = true): void {
-        let col: any;
+        //let col: any;
         let object: any;
         let columns: any[];
-        let colIndex: number;
+        //let colIndex: number;
         let evalFormula: string;
 
         this.upKeyHidden = true;
@@ -403,7 +408,7 @@ export class NgTableComponent implements OnInit, OnChanges {
 
                 /***** Check / Uncheck Checkboxes *****/
 
-                if ((row[this.idColumn] === this.checkedId) || (row.id == this.checkedId))
+                if ((row[this.idColumn] === this.checkedId) || (row.id === this.checkedId))
                     row.checked = 'checked';
                 else
                     row.checked = '';
@@ -440,17 +445,17 @@ export class NgTableComponent implements OnInit, OnChanges {
 
         this.columns.forEach((col, colIndex) => {
 
-            if (this.checkedId != '') {
-                if (this.checkedId != (this.dataRows[0][this.idColumn] || this.dataRows[0].id))
+            if (this.checkedId !== '') {
+                if (this.checkedId !== (this.dataRows[0][this.idColumn] || this.dataRows[0].id))
                     this.upKeyHidden = false;
-                if (this.checkedId != (this.dataRows[this.dataRows.length - 1][this.idColumn] || this.dataRows[this.dataRows.length - 1].id))
+                if (this.checkedId !== (this.dataRows[this.dataRows.length - 1][this.idColumn] || this.dataRows[this.dataRows.length - 1].id))
                     this.downKeyHidden = false;
             }
 
             /***** Validate data for each column *****/
 
-            this.columns.forEach((col, colIndex) => {
-                this.validateCells(colIndex);
+            this.columns.forEach((col1, colIndex1) => {
+                this.validateCells(colIndex1);
             });
         });
 
@@ -460,27 +465,27 @@ export class NgTableComponent implements OnInit, OnChanges {
     }
 
     onIncreaseSortOrderClicked(): void {
-        if (this.checkedId == '') {
+        if (this.checkedId === '') {
             this.toastr.warning('Please select an item first', 'Alert');
         }
         else {
             this.increaseSortOrderClicked.emit(this.checkedId);
         }
-    };
+    }
 
     onDecreaseSortOrderClicked(): void {
-        if (this.checkedId == '') {
+        if (this.checkedId === '') {
             this.toastr.warning('Please select an item first', 'Alert');
         }
         else {
             this.decreaseSortOrderClicked.emit(this.checkedId);
         }
-    };
+    }
 
     onLinkClicked(data: any, rowNo: number): void {
         data.rowNo = rowNo;
         data.rowIndex = this.rows[rowNo].rowNo;
-        data.rowId = (this.rows[rowNo][this.idColumn] || data.rowId)
+        data.rowId = (this.rows[rowNo][this.idColumn] || data.rowId);
         //console.log('idColumn: ' + this.idColumn + ' = ' + this.rows[rowIndex][this.idColumn]);
         data.key = data.name;
         this.linkClicked.emit(data);
@@ -494,18 +499,18 @@ export class NgTableComponent implements OnInit, OnChanges {
 
         this.evaluateFormulaFields(rowNo);
         this.validateCells(colNo);
-		this.cellValueChanged.emit({ rowNo, colNo, columnName, value: event, prevRow });
-		//this.blur.emit({ rowNo, colNo, columnName, value: event, prevRow });
-	}
+        this.cellValueChanged.emit({ rowNo, colNo, columnName, value: event, prevRow });
+        //this.blur.emit({ rowNo, colNo, columnName, value: event, prevRow });
+    }
 
-	onBlur(rowNo: number, colNo: number, event: any) {
-		let columnName = this.columns[colNo].name;
+    onBlur(rowNo: number, colNo: number, event: any) {
+        let columnName = this.columns[colNo].name;
         let prevRow = this.cloneObject(this.dataRows[rowNo]);
 
         this.evaluateFormulaFields(rowNo);
         this.validateCells(colNo);
-		this.blur.emit({ rowNo, colNo, columnName, value: event.value, prevRow });
-	}
+        this.blur.emit({ rowNo, colNo, columnName, value: event.value, prevRow });
+    }
 
     onChangeDropdown(id: string, rowNo: number, columnName: string, colNo: number) {
         //console.log('onChangeDropdown: ' + rowNo + ',' + columnName + ' -> evaluateFormulaFields');
@@ -518,12 +523,12 @@ export class NgTableComponent implements OnInit, OnChanges {
         let object = this.dataRows[rowNo];
         let columns = this._columns;
         let row = this.dataRows[rowNo];
-		let global = Global;
-		let a: string;
-		
+        let global = Global;
+        let a: string;
+
         if (this.calcFormulaFields.length > 0) {
-			this.calcFormulaFields.map(f => {
-				f.evalFormula = f.evalFormula ? f.evalFormula.replace('Global', 'global') : f.evalFormula;
+            this.calcFormulaFields.map(f => {
+                f.evalFormula = f.evalFormula ? f.evalFormula.replace('Global', 'global') : f.evalFormula;
 
                 row[f.name] = (!skipInitValueColumns && columns[f.col].initialValueFormula) ? row[f.name] :
                     (eval(f.evalFormula) ? eval(f.evalFormula) :
@@ -546,7 +551,7 @@ export class NgTableComponent implements OnInit, OnChanges {
                     });
                 }
 
-                if(this.hideZeroTotals)
+                if (this.hideZeroTotals)
                     col.hidden = (this.totals[col.name] === 0);
             });
         }
@@ -555,7 +560,6 @@ export class NgTableComponent implements OnInit, OnChanges {
     validateCells(colNo: number, rowNo: number = undefined): any {
         let len: number;
         let message: string;
-        let col: any;
         let matrixCol: any[];
 
         if (this.cellValidationMatrix && this.cellValidationMatrix[colNo]) {
@@ -584,13 +588,13 @@ export class NgTableComponent implements OnInit, OnChanges {
         }
     }
 
-    validateCells2(colNo: number, rowNo: number = undefined): any {
+    validateCells2(colNo: number, rowNo: number): any {
         let r: any, row: any, col: any;
         let columnName = this.columns[colNo].name;
         let pos: number;
         let matrixCell: any;
 
-        for (let rNo = (rowNo ? rowNo : 0); (rNo < this.dataRows.length) && ((rowNo == undefined) || (rNo === rowNo)); rNo++) {
+        for (let rNo = (rowNo ? rowNo : 0); (rNo < this.dataRows.length) && ((rowNo === undefined) || (rNo === rowNo)); rNo++) {
             row = this.dataRows[rNo];
             col = this.columns[colNo];
 
@@ -606,7 +610,7 @@ export class NgTableComponent implements OnInit, OnChanges {
 
             if (col.allowDuplicates === false) {
                 for (let i = 0; i < this.dataRows.length; i++) {
-                    if (i != rNo) {
+                    if (i !== rNo) {
                         r = this.dataRows[i];
 
                         if (row[columnName] === r[columnName]) {
@@ -636,7 +640,7 @@ export class NgTableComponent implements OnInit, OnChanges {
             let columns = this._columns;
             let evalValue: boolean;
 
-            let f = this.validationFormulaFields.find((x: any) => x.col == colNo);
+            let f = this.validationFormulaFields.find((x: any) => x.col === colNo);
 
             if (f) {
                 evalValue = eval(f.evalFormula);
@@ -649,10 +653,10 @@ export class NgTableComponent implements OnInit, OnChanges {
             /***** Check for Invalid value in dropdown *****/
 
             let items = col.itemsProp ? row[col.itemsProp] : col.items;
-            var val = row[columnName];
+            let val = row[columnName];
 
             if (items && row[columnName]) {
-                if (items.filter((x: any) => x.value == val).length === 0)
+                if (items.filter((x: any) => x.value === val).length === 0)
                     this.addMessage('N', colNo, rNo);
                 else
                     this.removeMessage('N', colNo, rNo);
@@ -670,7 +674,7 @@ export class NgTableComponent implements OnInit, OnChanges {
         return null;
     }
 
-    private addMessage(type: string, colNo: number, rowNo: number, sourceRowNo: number = undefined, message: string = '') {
+    private addMessage(type: string, colNo: number, rowNo: number = undefined, sourceRowNo: number = undefined, message: string = '') {
         if (!sourceRowNo) sourceRowNo = rowNo;
 
         let matrixCell = this.cellValidationMatrix[colNo][rowNo];
@@ -769,14 +773,14 @@ export class NgTableComponent implements OnInit, OnChanges {
             for (let i = 0; i < detailRows.length; i++) {
                 row = detailRows[i];
                 temp.splice(rowIndex + 2 + i, 0,
-                    Object.assign(row, { detail: true, mainRow: rowNo }))
+                    Object.assign(row, { detail: true, mainRow: rowNo }));
             }
             this.rows = temp;
         }
         else {
             Object.assign(this.dataRows[rowNo], { detailVisible: false, detailRows: [] });
             this.rows.map((x: any) => temp.push(x));
-            temp = temp.filter((x: any) => x.mainRow != rowNo);
+            temp = temp.filter((x: any) => x.mainRow !== rowNo);
             this.rows = temp;
         }
 
@@ -816,15 +820,16 @@ export class NgTableComponent implements OnInit, OnChanges {
             this.cellValidationMatrix[colNo] &&
             this.cellValidationMatrix[colNo][rowNo] &&
             this.cellValidationMatrix[colNo][rowNo].messages &&
-            (this.cellValidationMatrix[colNo][rowNo].messages.length > 0)
+            (this.cellValidationMatrix[colNo][rowNo].messages.length > 0);
     }
 
     private cloneObject(aObject: any) {
-        var bObject, v, k;
+        let bObject, v, k;
         bObject = Array.isArray(aObject) ? [] : {};
+        // tslint:disable-next-line:forin
         for (k in aObject) {
             v = aObject[k];
-            bObject[k] = (typeof v === "object") ? this.cloneObject(v) : v;
+            bObject[k] = (typeof v === 'object') ? this.cloneObject(v) : v;
         }
         return bObject;
     }
@@ -832,5 +837,5 @@ export class NgTableComponent implements OnInit, OnChanges {
     public setRows(rows: any[]) {
         this.rows = rows;
         this.dataRows = this.rows.filter((x: any) => !x.detail && !x.subForm);
-	}
+    }
 }

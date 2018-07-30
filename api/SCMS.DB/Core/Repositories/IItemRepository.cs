@@ -1,4 +1,4 @@
-using SCMS.DB.Model;
+using SCMS.DB.Models;
 using System.Collections.Generic;
 
 namespace SCMS.DB.Core.Repositories

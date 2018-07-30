@@ -7,11 +7,8 @@ namespace SCMS.API.Interfaces
   {
     TEntity Get(int id);
     IEnumerable<TEntity> GetAll();
-
     void Add(TEntity entity);
-    void AddRange(IEnumerable<TEntity> entities);
-
-    void Remove(int id);
-    void RemoveRange(IEnumerable<TEntity> entities);
+    void Update(int id, TEntity entity, bool markComplete);
+    void Delete(int id, bool markComplete);
   }
 }

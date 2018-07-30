@@ -1,4 +1,4 @@
-﻿import { Component, OnChanges, ViewChild, Input, Output, EventEmitter } from "@angular/core";
+﻿import { Component, OnChanges, ViewChild, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
     selector: 'imagelink',
@@ -13,7 +13,7 @@ export class NgTableImageLinkComponent {
 
     @Output() linkClicked: EventEmitter<any> = new EventEmitter();
 
-    @ViewChild(HTMLLinkElement) htmlLink: HTMLLinkElement;
+    // @ViewChild(HTMLLinkElement) htmlLink: HTMLLinkElement;
 
     public constructor() {
 

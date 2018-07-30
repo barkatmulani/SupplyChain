@@ -2,24 +2,24 @@ import { Directive, EventEmitter, Input, Output, HostListener } from '@angular/c
 
 @Directive({selector: '[ngTableSorting]'})
 export class NgTableSortingDirective {
-  @Input() public ngTableSorting:any;
-  @Input() public column:any;
-  @Output() public headerClicked:EventEmitter<any> = new EventEmitter();
+  @Input() public ngTableSorting: any;
+  @Input() public column: any;
+  @Output() public headerClicked: EventEmitter<any> = new EventEmitter();
 
   @Input()
-  public get config():any {
+  public get config(): any {
     return this.ngTableSorting;
   }
 
-  public set config(value:any) {
+  public set config(value: any) {
     this.ngTableSorting = value;
   }
 
   @HostListener('click', ['$event'])
-  public onToggleSort(event:any):void {
+  public onToggleSort(event: any): void {
     if (event) {
         //console.log(event)
-        event.preventDefault();;
+        event.preventDefault();
     }
 
     if (this.ngTableSorting && this.column && this.column.sort !== false) {

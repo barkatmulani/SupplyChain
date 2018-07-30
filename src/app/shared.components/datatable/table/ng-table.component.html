@@ -12,7 +12,7 @@
                 [ngStyle]="{ 'display': (column.hidden ? 'none' : ''), 'width': column.width, 'max-width': column.width }"
                 [ngTableSorting]="config" [column]="column"
                 (headerClicked)="onHeaderClicked(column)"
-                [ngClass]="{ 'sortable': (allowSorting && !sortingInput && column.name) }"
+                [ngClass]="{ 'sortable': (allowSorting && column.name) }"
                 [attr.rowspan]="column.colspan ? 1 : maxLevel"
                 [attr.colspan]="column.colspan ? column.colspan : 1">
                 <input name="heading_{{level}}_{{colIndex}}"
@@ -21,7 +21,7 @@
                        [checked]="column.checked"
                        (click)="onHeaderCheckboxClicked($event, column)" />
                 {{column.title}}
-                <i *ngIf="allowSorting && config && !sortingInput && column.name && column.sort" class="pull-right fa"
+                <i *ngIf="allowSorting && config && column.name && column.sort" class="pull-right fa"
                    [ngClass]="{'fa-chevron-down': column.sort === 'desc', 'fa-chevron-up': column.sort === 'asc'}">
                 </i>
             </th>
@@ -135,7 +135,6 @@
 				[attr.colspan]="addButtonSpan - 1"
 				*ngIf="allowAddition">
 				<button type="button"
-						*ngIf="allowAddition"
 						[ngClass]="{ 'disabled': !allRowsValid }"
 						(click)="onAddClicked()"
 						[disabled]="disabled"
@@ -144,8 +143,8 @@
 				</button>
 			</td>
 			<td [ngStyle]="{ 'vertical-align': 'middle' }"
-				[attr.colspan]="1">
-				<span class="pull-right">Total:</span>
+				[attr.colspan]="addButtonSpan">
+				<span class="pull-right" *ngIf="showTotals">Total:</span>
 			</td>
 			<td *ngFor="let column of columns.slice((addButtonSpan) + hiddenColumns); let i = index"
 				class="textRight"

@@ -4,7 +4,7 @@
             [(ngModel)]="value"
             [disabled]="((items && (items.length === 0))) || disabled"
             title="{{tooltip}}"
-            (change)="onChanged(this)">
+            (change)="onChanged()">
         <option value="">Select {{title}}</option>
         <option *ngFor="let item of items"
                 [title]="(item && item.tooltip) ? item.tooltip : ''"

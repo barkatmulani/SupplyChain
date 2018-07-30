@@ -1,54 +1,113 @@
 import { Component, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { Router, ActivatedRoute } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
-import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Ng4LoadingSpinnerService } from 'ng4-loading-spinner';
+import { Global } from '../../../global';
+import { ItemService } from '../../services/common.services';
 
 @Component({
   selector: 'item',
-  templateUrl: './item.component.html'
+  moduleId: module.id,
+  templateUrl: 'item.component.html'
 })
 export class ItemComponent {
   
-  private frmItem: FormGroup;
+  public frmItem: FormGroup;
+
+  itemId: number = 0;
+  pageNo: number = 1;
 
   constructor(private toastr: ToastrService,
               private router: Router,
               private route: ActivatedRoute,
               private fb: FormBuilder,
-              private http: HttpClient)
+              private http: HttpClient,
+              private spinnerService: Ng4LoadingSpinnerService,
+              private itemService: ItemService)
   {
     let args: any[] = [];
 
-    this.frmItem = new FormGroup ({
-      itemDescription: new FormControl(),
-      cost: new FormControl(),
-      price: new FormControl()
+    this.frmItem = this.fb.group({
+      itemDescription: ['', Validators.required],
+      cost: '',
+      price: ''
     });
     
-    route.params.forEach(x => {
-      console.log(x);
-      if(x.id && x.id > 0) {
-        this.http.get('http://localhost:2020/SCMS/api/item/' + x.id).subscribe((data: any) => {
-          this.loadData(data);
-        },
-        error => {
-          console.log(error);
-        });
-      }
-    });
+    let id = route.snapshot.params['id'];
+    if(id && id > 0) {
+      this.itemId = id;
+      this.spinnerService.show(); 
+
+      this.itemService.get(id).subscribe((data: any) => {
+        this.loadData(data);
+      },
+      error => {
+        console.log(error);
+      },
+      () => {
+        this.spinnerService.hide(); 
+      });
+    }
+    
+    let pageNo = route.snapshot.params['pageNo'];
+    if(pageNo && pageNo > 0) {
+      this.pageNo = pageNo;
+    }
+
+    Global.stripFromUrl(5);
   }
 
   loadData(data: any) {
-    this.frmItem = this.fb.group({
-      itemDescription: data.ItemDescription,
-      cost: data.Cost,
-      price: data.Price
+    this.frmItem.patchValue({
+      itemDescription: data.itemDescription,
+      cost: data.cost,
+      price: data.price
     });
   }
 
   onSave() {
-    this.toastr.success('Record saved successfully', 'Success!');
-    this.router.navigate(['/itemlist']);
+    let item = { itemId: this.itemId,
+                 active: true,
+                 itemDescription: this.frmItem.get('itemDescription').value,
+                 cost: this.frmItem.get('cost').value,
+                 price: this.frmItem.get('price').value
+               };
+
+    let httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json',
+        'Authorization': 'my-auth-token',
+        'Access-Control-Allow-Origin': '*'
+      })};
+    
+    console.log(item);
+    let methodCall: any;
+
+    this.spinnerService.show(); 
+    if(item.itemId === 0) {
+        methodCall = this.http.post(Global.dbUrl + 'api/item', item);
+    }
+    else {
+        methodCall = this.http.put(Global.dbUrl + 'api/item/' + item.itemId, item);
+    }
+        
+    methodCall.subscribe((data: any) => {
+        this.toastr.success('Record saved successfully', 'Success!');
+        this.spinnerService.hide();
+        this.router.navigate(['/itemlist', this.pageNo]);
+      },
+      error => {
+        console.log(error);
+        this.toastr.error(error.message, 'Error!');
+        this.spinnerService.hide(); 
+      },
+      () => {
+      });
   }
+
+  onCancel() {
+    this.router.navigate(['/item-list', this.pageNo]);
+  }  
 }

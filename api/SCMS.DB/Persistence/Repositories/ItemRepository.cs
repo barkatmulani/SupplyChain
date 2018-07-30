@@ -1,8 +1,7 @@
-using SCMS.DB.Model;
-using SCMS.DB.Core.Repositories;
-using System.Data.Entity;
 using System.Linq;
 using System.Collections.Generic;
+using SCMS.DB.Models;
+using SCMS.DB.Core.Repositories;
 
 namespace SCMS.DB.Persistence.Repositories
 {
@@ -14,7 +13,7 @@ namespace SCMS.DB.Persistence.Repositories
 
     public List<Item> GetItemsWithZeroCost()
     {
-      return SCMSContext.Items.Include(a => a.Cost == 0).ToList();
+      return SCMSContext.Item.Where(a => a.Cost == 0).ToList();
     }
 
     public SCMSContext SCMSContext

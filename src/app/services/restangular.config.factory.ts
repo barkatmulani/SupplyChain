@@ -2,7 +2,7 @@
 import { AppComponent } from '../app.component';
 import { RestangularModule, Restangular } from 'ngx-restangular';
 import { AuthenticationService } from './authentication.service';
-import { Global } from '../shared.components/global';
+import { Global } from '../shared.components/shared.global';
 
 // Function for settting the default restangular configuration
 export function RestangularConfigFactory(RestangularProvider: any) {
@@ -23,23 +23,23 @@ export function RestangularConfigFactory(RestangularProvider: any) {
 
     // by each request to the server receive a token and update headers with it
     RestangularProvider.addFullRequestInterceptor((element: any, operation: any, path: any, url: any, headers: any, params: any) => {
-        var authInterceptorServiceFactory = {};
+        let authInterceptorServiceFactory = {};
 
-        var _request = function (config: any) {
+        let _request = function (config: any) {
         
             config = getHeader();
 
             return config;
-        }
+        };
 
-        var _responseError = function (rejection:any) {
+        let _responseError = function (rejection:any) {
             if (rejection.status === 401) {
-                localStorage.removeItem(Global.Constants.ZionAPI.Env + "authorizationData"); 
+                localStorage.removeItem(Global.Constants.ZionAPI.Env + 'authorizationData'); 
                 window.location.href = Global.Constants.ZionAPI.ShortWeb + '/Account/LogOff'; //authService.zionAPI.Web + authService.zionPaths.Logout;
             }
             console.log(rejection);
             //return $q.reject(rejection);
-        }
+        };
 
         authInterceptorServiceFactory = Object.assign({}, authInterceptorServiceFactory, { request: _request, responseError: _responseError });
 
@@ -51,10 +51,10 @@ export function RestangularConfigFactory(RestangularProvider: any) {
 function getHeader() {
     let header = {Authorization: ''};
 
-    let authData = localStorage.getItem(Global.Constants.ZionAPI.Env + "authorizationData");
+    let authData = localStorage.getItem(Global.Constants.ZionAPI.Env + 'authorizationData');
    
     if (authData) {
-        var authDataJSON = JSON.parse(authData);
+        let authDataJSON = JSON.parse(authData);
         header.Authorization = 'Bearer ' + authDataJSON.token;
     }
 

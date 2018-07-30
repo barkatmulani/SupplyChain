@@ -1,17 +1,17 @@
-﻿import { Component, Input, Output, EventEmitter, forwardRef, OnChanges, OnInit } from "@angular/core";
-import { TextValuePair } from "./TextValuePair";
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
+﻿import { Component, Input, Output, EventEmitter, forwardRef, OnChanges, OnInit } from '@angular/core';
+import { TextValuePair } from './TextValuePair';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 const CUSTOM_INPUT_CONTROL_VALUE_ACCESSOR: any = {
     provide: NG_VALUE_ACCESSOR,
     multi: true,
     useExisting: forwardRef(() => DropdownComponent)
-}
+};
 
 @Component({
-    selector: "dropdown",
+    selector: 'dropdown',
     moduleId: module.id,
-    templateUrl: "dropdown.component.html",
+    templateUrl: 'dropdown.component.html',
     providers: [CUSTOM_INPUT_CONTROL_VALUE_ACCESSOR]
 })
 
@@ -20,20 +20,20 @@ export class DropdownComponent implements ControlValueAccessor, OnInit, OnChange
 
     @Input() title: string;
     @Input() showTooltip: boolean;
-	@Input() disabled: boolean = false;
+    @Input() disabled: boolean = false;
     @Input() showLabel: boolean = false;
     @Input() selectedValue: string = '';
-    @Input() items: TextValuePair[] = [new TextValuePair('','','')];
+    @Input() items: TextValuePair[] = [new TextValuePair('', '', '')];
     @Output() onSelected: EventEmitter<string> = new EventEmitter();
 
-	ngOnInit(): void {
-	}
+    ngOnInit(): void {
+    }
 
-	ngOnChanges(): void {
-		this.value = this.selectedValue;
-	}
+    ngOnChanges(): void {
+        this.value = this.selectedValue;
+    }
 
-	onChanged(): void {
+    onChanged(): void {
         this.onSelected.emit(this.value);
     }
 
@@ -68,7 +68,7 @@ export class DropdownComponent implements ControlValueAccessor, OnInit, OnChange
     get tooltip(): string {
         let retVal: string = '';
         if (this.showTooltip && this.items && this.items.length > 0) {
-            let val = this.items.filter(x => x.value === this.myValue)[0]
+            let val = this.items.filter(x => x.value === this.myValue)[0];
             if (val) retVal = val.text;
         }
         return retVal;

@@ -1,6 +1,6 @@
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SCMS.DB.Model;
+using SCMS.DB.Models;
 using SCMS.DB.Persistence;
 using System.Collections.Generic;
 

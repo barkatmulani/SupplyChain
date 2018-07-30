@@ -11,21 +11,22 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist",
+            "outputPath": "D:/Websites/SCMS.APP",
             "index": "src/index.html",
             "main": "src/main.ts",
             "tsConfig": "src/tsconfig.app.json",
             "polyfills": "src/polyfills.ts",
             "assets": [
               "src/assets",
-              "src/assets/supplychain.jpg",
-              "src/assets/filtericon.png",
-              "src/assets/open-book.png"
+              "src/web.config"
             ],
             "styles": [
               "src/styles.css",
+              "src/custom.css",
               "node_modules/bootstrap/dist/css/bootstrap.css",
-              "node_modules/ngx-toastr/toastr.css"
+              "node_modules/ngx-toastr/toastr.css",
+              "src/app/shared.components/datatable/table/assets/ng-table.css",
+              "node_modules/@ng-select/ng-select/themes/default.theme.css"
             ],
             "scripts": []
           },
@@ -81,9 +82,7 @@
             ],
             "assets": [
               "src/assets",
-              "src/assets/supplychain.jpg",
-              "src/assets/filtericon.png",
-              "src/assets/open-book.png"
+              "src/web.config"
             ]
           }
         },

@@ -92,7 +92,7 @@ export class Global {
             bObject[k] = (typeof v === "object") ? this.cloneObject(v) : v;
         }
         return bObject;
-	}
+    }
 }
 
 @Injectable()

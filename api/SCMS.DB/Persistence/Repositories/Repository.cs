@@ -1,7 +1,8 @@
+using Microsoft.EntityFrameworkCore;
 using SCMS.DB.Core.Repositories;
+using SCMS.DB.Models;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -9,21 +10,27 @@ namespace SCMS.DB.Persistence.Repositories
 {
   public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
   {
-    protected readonly DbContext Context;
+    public DbContext Context;
+    //private SCMSContext context;
 
     public Repository(DbContext context)
     {
       Context = context;
     }
 
-    public TEntity Get(int id)
+    public Repository(SCMSContext context)
+    {
+      this.Context = context;
+    }
+
+    public virtual TEntity Get(int id)
     {
       // Here we are working with a DbContext, not PlutoContext. So we don't have DbSets 
       // such as Courses or Authors, and we need to use the generic Set() method to access them.
       return Context.Set<TEntity>().Find(id);
     }
 
-    public IEnumerable<TEntity> GetAll()
+    public virtual IEnumerable<TEntity> GetAll()
     {
       // Note that here I've repeated Context.Set<TEntity>() in every method and this is causing
       // too much noise. I could get a reference to the DbSet returned from this method in the 
@@ -36,7 +43,13 @@ namespace SCMS.DB.Persistence.Repositories
       // 
       // I didn't change it because I wanted the code to look like the videos. But feel free to change
       // this on your own.
-      return Context.Set<TEntity>().ToList();
+      return Context.Set<TEntity>().Where(x => Check(x)).ToList();
+    }
+
+    private bool Check(TEntity x)
+    {
+      var val = (bool?)x.GetType().GetProperty("Active").GetValue(x);
+      return val.HasValue ? val.Value : false;
     }
 
     public IEnumerable<TEntity> Find(Expression<Func<TEntity, bool>> predicate)
@@ -49,22 +62,23 @@ namespace SCMS.DB.Persistence.Repositories
       return Context.Set<TEntity>().SingleOrDefault(predicate);
     }
 
-    public void Add(TEntity entity)
+    public virtual void Add(TEntity entity)
     {
       Context.Set<TEntity>().Add(entity);
     }
 
-    public void AddRange(IEnumerable<TEntity> entities)
+    public virtual void AddRange(IEnumerable<TEntity> entities)
     {
       Context.Set<TEntity>().AddRange(entities);
     }
 
-    public void Remove(TEntity entity)
+    public virtual void Remove(TEntity entity)
     {
-      Context.Set<TEntity>().Remove(entity);
+      entity.GetType().GetProperty("Active").SetValue(entity, false);
+      Context.Set<TEntity>().Update(entity);
     }
 
-    public void RemoveRange(IEnumerable<TEntity> entities)
+    public virtual void RemoveRange(IEnumerable<TEntity> entities)
     {
       Context.Set<TEntity>().RemoveRange(entities);
     }

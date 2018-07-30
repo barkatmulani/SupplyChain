@@ -1,6 +1,7 @@
 using SCMS.API.Interfaces;
 using SCMS.API.Services;
-using SCMS.DB.Model;
+using SCMS.DB.Models;
+using SCMS.DB.Persistence;
 using SCMS.DB.Persistence.Repositories;
 using System.Collections.Generic;
 

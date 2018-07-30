@@ -1,5 +1,5 @@
 ﻿import { NgModule } from "@angular/core";
-import { CommonModule } from "@angular/common";
+import { CommonModule, CurrencyPipe, DecimalPipe, DatePipe } from "@angular/common";
 
 import { OrderByPipe } from "./pipes.components/orderbypipe";
 import { SortPipe } from './pipes.components/sortpipe';
@@ -18,6 +18,11 @@ import { FormatPipe } from './pipes.components/formatpipe';
         OrderByPipe,
         SortPipe,
         FormatPipe
+    ],
+    providers: [
+        CurrencyPipe,
+        DecimalPipe,
+        DatePipe
     ]
 })
 

@@ -1,19 +1,19 @@
-﻿import { Component, Output, EventEmitter, OnChanges } from "@angular/core";
-import { ControlValueAccessor } from "@angular/forms";
+﻿import { Component, Output, EventEmitter, OnChanges } from '@angular/core';
 
 @Component({
-    selector: "itemsperpageselector",
+    // tslint:disable-next-line:component-selector
+    selector: 'itemsperpageselector',
     moduleId: module.id,
-    templateUrl: "itemsPerPageSelector.html",
+    templateUrl: 'itemsPerPageSelector.html',
 })
 
-export class ItemsPerPageSelectorComponent {
+export class ItemsPerPageSelectorComponent implements OnChanges {
 
     @Output() itemsPerPageChanged: EventEmitter<any> = new EventEmitter();
 
-    private currentSelection: number = 0;
-    private itemsPerPageList: number[] = [10, 25, 50, 100];
-    public itemsPerPage: number = this.itemsPerPageList[0];
+    private currentSelection = 0;
+    public itemsPerPageList: number[] = [10, 25, 50, 100];
+    public itemsPerPage: number = 10;
 
     myValue: string;
 
