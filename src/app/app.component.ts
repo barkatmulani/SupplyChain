@@ -1,54 +1,55 @@
-import { Component } from '@angular/core';
-import { ItemService, InventoryService, VendorService } from './services/common.services';
-import { TextValuePair } from './shared.components/dropdown.component/TextValuePair';
+import { Component, OnInit } from '@angular/core';
+import { Event, NavigationStart, NavigationEnd, NavigationError, NavigationCancel, Router } from '@angular/router';
+import { slideInAnimation } from './app.animations';
+import { Store, select } from '@ngrx/store';
+import { Subscription } from 'rxjs';
+import { RecordSelectors } from './store/record.selectors';
+import { ToastrService } from 'ngx-toastr';
+import { LoadItemListSuccess, LoadItemList } from './core/item/store/item.actions';
 
 @Component({
   selector: 'app-root',
   moduleId: module.id,
   templateUrl: 'app.component.html',
-  styleUrls: ['app.component.css']
+  styleUrls: ['app.component.css'],
+  animations: [slideInAnimation]
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'Supply Chain Management System';
+  loading: boolean;
+  error$: Subscription;
 
-  constructor(private itemService: ItemService,
-              private inventoryService: InventoryService,
-              private vendorService: VendorService
-            ) {
+  constructor(private router: Router,
+              private toastr: ToastrService,
+              private store: Store) {
+  }
 
-    /***** Item List *****/
-    let itemList: any[] = [];
+  ngOnInit() {
+    this.router.events.subscribe((routerEvent: Event) => {
+      this.checkRouterEvent(routerEvent);
+    });
 
-    if(!sessionStorage.getItem("itemList")) {
-      this.itemService.getAll().subscribe(
-      (data: any) => {
-        data.map(x => {
-          itemList.push(new TextValuePair(x.itemDescription, x.itemId));
-        });
-      },
-      (error: any) => { console.log(error); },
-      () => {
-        sessionStorage.setItem("itemList", JSON.stringify(itemList));
+    this.error$ = this.store.pipe(select(RecordSelectors.getError)).subscribe(
+      (error: any) => {
+          if(error && !this.toastr.currentlyActive)
+          this.toastr.error(error.message, 'Error!');
       });
-    }
+  }
 
-    /***** Inventory List *****/
-    let inventoryList = [];
+  checkRouterEvent(routerEvent: Event): void {
+    // console.log(routerEvent)
+    // const e: any = routerEvent;
+    // if (e.url && e.url.substring(e.url.length - 1) !== 's') {
 
-    this.inventoryService.getAll().subscribe(
-      (data: any) => { inventoryList = data },
-      (error: any) => { console.log(error); },
-        () => {
-          sessionStorage.setItem("inventoryList", JSON.stringify(inventoryList));
-        });
+    //   if (routerEvent instanceof NavigationStart) {
+    //     this.loading = true;
+    //   }
 
-    /***** Vendor List *****/
-    let vendorList = [];
-    this.vendorService.getAll().subscribe(
-      (data: any) => { vendorList = data },
-      (error: any) => { console.log(error); },
-        () => {
-          sessionStorage.setItem("vendorList", JSON.stringify(vendorList));
-        });
+    //   if (routerEvent instanceof NavigationEnd ||
+    //     routerEvent instanceof NavigationCancel ||
+    //     routerEvent instanceof NavigationError) {
+    //       this.loading = false;
+    //     }
+    // }
   }
 }

@@ -8,13 +8,6 @@
     cursor: pointer;
 }
 
-.rowdangerhighlightcolor {
-    background-color: #FF7575;
-}
-
-.bookeditbtnalign {
-    text-align: center;
-}
 
 
 .plusicon {
@@ -2486,56 +2479,4 @@ body:not(.fixed-sidebar):not(.canvas-menu).mini-navbar .nav li:hover > .nav-seco
     height: 20px;
     cursor: pointer !important;
     display: inline-block;
-}
-
-#draggable {
-    padding-left: 0px !important;
-    padding-right: 0px !important;
-    position: absolute;
-    z-index: 999;
-    left: 30%;
-    top: 16%;
-}
-
-    #draggable .panel {
-        margin-bottom: 0px !important
-    }
-
-    #draggable .panel-body ol {
-        padding-left: 15px !important;
-    }
-
-    #draggable .panel-heading {
-        background-color: #12BCEE;
-        color: #FFF;
-        font-weight: bold;
-        font-size: 12px;
-    }
-
-        #draggable .panel-heading a {
-            color: #FFF !important;
-        }
-
-    #draggable .panel-body ol li {
-        font-size: 11px;
-    }
-
-    #draggable .panel-body ol p {
-        font-size: 12px;
-        color: red;
-    }
-
-    #draggable.ui-widget-content {
-        border: none !important;
-    }
-
-    #draggable .panel-body {
-        border: 1px solid #dddddd !important;
-    }
-
-    #draggable .panel-heading, #draggable .panel-default {
-        border: none !important;
-    }
-.InvoiceHeader #tblicon, .claimHeader #tblicon{
-    margin: -15px 0 0 0;
 }

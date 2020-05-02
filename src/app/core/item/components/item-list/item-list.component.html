@@ -1,0 +1,47 @@
+<div class="panel panel-primary scms">
+    <div class="panel-heading">Items</div>
+    <div class="panel-body">
+        <div class="row my-3">
+            <div class="col-sm-6">
+                <cm-switch  [label]="'Open details in new page'"
+                            [selected]="navigationFlag"
+                            (onToggle)="onSwitchToggle($event)"
+                >
+                </cm-switch>
+            </div>
+
+            <div class="col-sm-6 text-right">
+                <button type="submit" class="btn btn-success" (click)="onAddClicked()">
+                    <i class="fas fa-plus-circle"></i>
+                    Add New
+                </button>
+            </div>
+        </div>
+
+        <div class="scrollable" *ngIf="rows$ | async; else spinner">
+            <datatable #datatable
+                    [showFilterRow]="false"
+                    [allowEditing]="false"
+                    [allowReordering]="false"
+                    [page]="pageNo$ | async"
+                    [hasData]="hasData"
+                    (tableChanged)="onChangeTable(config)"
+                    (pageChanged)="onPageChanged($event)"
+                    (linkClicked)="onLinkClicked($event)"
+                    (cellClicked)="onCellClick($event)"
+                    [tableData]="rows$ | async"
+                    [allowSelection]="false"
+                    [columns]="columns">
+            </datatable>
+        </div>
+    </div>
+</div>
+
+<confirmation   #deleteconfirmation
+                [message]="'Are you sure you want to delete this record?'"
+                (confirm)="onDeleteConfirm($event)">
+</confirmation>
+
+<ng-template #spinner>
+    <loadingspinner #spinner></loadingspinner>
+</ng-template>

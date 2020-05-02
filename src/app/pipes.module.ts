@@ -1,9 +1,9 @@
 ﻿import { NgModule } from "@angular/core";
 import { CommonModule, CurrencyPipe, DecimalPipe, DatePipe } from "@angular/common";
 
-import { OrderByPipe } from "./pipes.components/orderbypipe";
-import { SortPipe } from './pipes.components/sortpipe';
-import { FormatPipe } from './pipes.components/formatpipe';
+import { OrderByPipe } from "./pipes/orderbypipe";
+import { SortPipe } from './pipes/sortpipe';
+import { FormatPipe } from './pipes/formatpipe';
 
 @NgModule({
     imports: [

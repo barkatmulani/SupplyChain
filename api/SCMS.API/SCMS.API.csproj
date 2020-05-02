@@ -4,7 +4,7 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <AssemblyName>SCMS.API</AssemblyName>
     <RootNamespace>SCMS.API</RootNamespace>
-    <OutputPath>D:\Websites\SCMS</OutputPath>
+    <OutputPath></OutputPath>
     <ApplicationIcon />
     <OutputType>Exe</OutputType>
     <StartupObject />

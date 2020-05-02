@@ -42,7 +42,7 @@ export class PurchaseOrderService extends ApiService {
     }
 
     public getAllByStatusId(statusId: number): Observable<any> {
-        return this.http.get(Global.dbUrl + 'api/' + Entity.PURCHASE_ORDER + '/' + statusId + '/1/1');
+        return this.http.get(Global.apiUrl + Entity.PURCHASE_ORDER + '/' + statusId + '/1/1');
     }
 }
 
@@ -60,6 +60,6 @@ export class ReceiptService extends ApiService {
     }
 
     public getAllByStatusId(statusId: number): Observable<any> {
-        return this.http.get(Global.dbUrl + 'api/' + Entity.RECEIPT + '/' + statusId + '/1/1');
+        return this.http.get(Global.apiUrl + Entity.RECEIPT + '/' + statusId + '/1/1');
     }
 }

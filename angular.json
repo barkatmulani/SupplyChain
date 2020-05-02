@@ -11,7 +11,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "D:/Websites/SCMS.APP",
+            "outputPath": "C:/Websites/SCMS.APP",
             "index": "src/index.html",
             "main": "src/main.ts",
             "tsConfig": "src/tsconfig.app.json",
@@ -21,12 +21,14 @@
               "src/web.config"
             ],
             "styles": [
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "src/styles.css",
-              "src/custom.css",
+              "src/site.css",
               "node_modules/bootstrap/dist/css/bootstrap.css",
               "node_modules/ngx-toastr/toastr.css",
-              "src/app/shared.components/datatable/table/assets/ng-table.css",
-              "node_modules/@ng-select/ng-select/themes/default.theme.css"
+              "src/app/shared/datatable/table/assets/ng-table.css",
+              "node_modules/@ng-select/ng-select/themes/default.theme.css",
+              "node_modules/@fortawesome/fontawesome-free/css/all.css"
             ],
             "scripts": []
           },

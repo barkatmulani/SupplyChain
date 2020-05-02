@@ -1,8 +1,9 @@
-export class Global {
-    //static dbUrl = 'https://supplychainmanagementsystem-api.azurewebsites.net/';
-    static dbUrl = 'http://localhost:2020/';
+import { ToastrService } from "ngx-toastr";
 
-    static staticConstructor() {
+export class Global {
+    static _apiUrl = '';
+
+    static initialize() {
         var docURL = document.URL;
 
         var prefix = 'http://'
@@ -11,13 +12,14 @@ export class Global {
         }
 
         if (docURL.indexOf('localhost') >= 0) {
-            Global.dbUrl = prefix + 'localhost:2020/';
+            Global.apiUrl = prefix + 'api.supplychain-ms.com/api/';
         }
         else if (docURL.indexOf('azure') >= 0) {
-            Global.dbUrl = prefix + 'supplychainmanagementsystem-api.azurewebsites.net/';
+            Global.apiUrl = prefix + 'supplychainmanagementsystem-api.azurewebsites.net/api/';
         }
-
-        console.log('Global.dbUrl: ' + Global.dbUrl);
+        else {
+            Global.apiUrl = prefix + 'api.supplychain-ms.com/api/';
+        }
     }
 
     public static stripFromUrl(count: number) {
@@ -93,6 +95,32 @@ export class Global {
         }
         return str + n;
     }
+
+    public static get apiUrl() {
+        // console.log('_apiUrl: ' + Global._apiUrl);
+        return Global._apiUrl;
+    }
+
+    public static set apiUrl(val: string) {
+        Global._apiUrl = val;
+    }
+
+    public static showNotification(type: string, toastr: ToastrService) {
+        let action: string;
+    
+        if(type === 'C') {
+            toastr.warning('Action cancelled', 'Notification!');
+        }
+        else {        
+            switch (type) {
+                case 'A': action = 'added'; break;
+                case 'U': action = 'updated'; break;
+                case 'D': action = 'deleted'; break;
+            }
+            
+            toastr.success(`Record ${action} successfully`, 'Success!');
+        }
+    }
 }
 
 export enum Status
@@ -101,3 +129,5 @@ export enum Status
   Posted,
   Cancelled
 }
+
+Global.initialize();

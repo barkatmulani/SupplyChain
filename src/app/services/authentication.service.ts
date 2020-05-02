@@ -1,12 +1,10 @@
 ﻿import { Injectable } from '@angular/core';
-import { Http, RequestOptions, Response } from '@angular/http';
+import { Http, Response } from '@angular/http';
 import { Observable } from 'rxjs';
-import { Restangular } from 'ngx-restangular';
 
 @Injectable()
 export class AuthenticationService {
-    constructor(private http: Http,
-        private restangular: Restangular) {
+    constructor(private http: Http) {
         this.fillAuthData();
     }
 
