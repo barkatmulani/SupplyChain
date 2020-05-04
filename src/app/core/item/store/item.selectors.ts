@@ -3,10 +3,15 @@ import { ItemListState } from "./";
 
 export const itemSelector = createFeatureSelector<ItemListState>('item');
 
-export class itemSelectors {
+export class ItemSelectors {
     static getPageNo = createSelector(
         itemSelector,
         state => state.pageNo
+    );
+
+    static getRecordsPerPage = createSelector(
+        itemSelector,
+        state => state.recordsPerPage
     );
 
     static getItems = createSelector(

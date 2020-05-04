@@ -108,14 +108,14 @@ export class Global {
     public static showNotification(type: string, toastr: ToastrService) {
         let action: string;
     
-        if(type === 'C') {
+        if(type === RecordActionType.Cancel) {
             toastr.warning('Action cancelled', 'Notification!');
         }
         else {        
             switch (type) {
-                case 'A': action = 'added'; break;
-                case 'U': action = 'updated'; break;
-                case 'D': action = 'deleted'; break;
+                case RecordActionType.Add: action = 'added'; break;
+                case RecordActionType.Update: action = 'updated'; break;
+                case RecordActionType.Delete: action = 'deleted'; break;
             }
             
             toastr.success(`Record ${action} successfully`, 'Success!');
@@ -129,5 +129,13 @@ export enum Status
   Posted,
   Cancelled
 }
+
+export enum RecordActionType {
+    None = '',
+    Add = 'A',
+    Update = 'U',
+    Delete = 'D',
+    Cancel = 'C'
+};
 
 Global.initialize();

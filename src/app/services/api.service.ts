@@ -1,5 +1,5 @@
 import { Observable, throwError } from "rxjs";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Global } from "../../global";
 import { Injectable } from "@angular/core";
 import { tap, catchError, map } from "rxjs/operators";
@@ -8,6 +8,14 @@ import { tap, catchError, map } from "rxjs/operators";
 export abstract class ApiService {
     constructor(protected http: HttpClient,
                 private entity: string) {
+
+    let httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json',
+        'Authorization': 'my-auth-token',
+        'Access-Control-Allow-Origin': '*'
+      })};
+      
     }
 
     public getAll(): Observable<any> {
@@ -27,10 +35,7 @@ export abstract class ApiService {
     }
 
     public put(id: number, record: any): Observable<any> {
-        return this.http.put(Global.apiUrl + this.entity + '/' + id, record).pipe(
-            tap(data => console.log(data)),
-            catchError(this.handleError)
-          );;
+        return this.http.put(Global.apiUrl + this.entity + '/' + id, record);
     }
 
     public delete(id: number): Observable<any> {

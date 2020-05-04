@@ -3,6 +3,27 @@ import { RecordListActions } from './record.actions';
 
 export function RecordListReducer(state = recordInitialState, action: RecordListActions) {
     switch (action.type) {
+        case RecordActionTypes.SaveRecord:
+            return {
+                ...state,
+                lastActionType: 'U',
+                error: null
+        }
+
+        case RecordActionTypes.AddRecord:
+            return {
+                ...state,
+                lastActionType: 'A',
+                error: null
+        }
+
+        case RecordActionTypes.DeleteRecord:
+            return {
+                ...state,
+                lastActionType: 'D',
+                error: null
+        }
+
         case RecordActionTypes.SetLastActionType:
             return {
                 ...state,
@@ -31,20 +52,13 @@ export function RecordListReducer(state = recordInitialState, action: RecordList
                 error: null
             };
 
-        case RecordActionTypes.SetNavigationPath:
+        case RecordActionTypes.AddToNavigationHistory:
             return {
                 ...state,
-                navigationPath: action.payload,
+                navigationHistory: [...state.navigationHistory, action.payload],
                 error: null
             };
 
-        case RecordActionTypes.ResetNavigationPath:
-            return {
-                ...state,
-                navigationPath: '',
-                error: null
-            };
-    
         case RecordActionTypes.SetError:
             return {
                 ...state,

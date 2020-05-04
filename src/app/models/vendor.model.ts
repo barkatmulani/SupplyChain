@@ -1,11 +1,13 @@
 export interface Vendor {
     vendorId: number;
-    vendorDescription: string;
+    active: boolean;
+    vendorName: string;
+    address: string;
+    phoneNo: string;
 };
 
 export interface ResolvedVendorList {
-    vendors: Vendor[],
-    error?: any;
+    count: number
 }
 
 export interface ResolvedVendor {

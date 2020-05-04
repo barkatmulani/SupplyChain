@@ -14,6 +14,11 @@ export class RecordSelectors {
         state => state.recordUpdatedFlag
     );
 
+    static getLastNavigationPath = createSelector(
+        RecordSelector,
+        state => state.navigationHistory[state.navigationHistory.length - 2]
+    )
+
     static getError = createSelector(
         RecordSelector,
         state => state.error

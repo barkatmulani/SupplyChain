@@ -12,7 +12,7 @@ import { NgTablePagingDirective } from './datatable/table/ng-table-paging.direct
 import { NgTableSortingDirective } from './datatable/table/ng-table-sorting.directive';
 //import { InfoPopupComponent } from './infopopup.component/infopopup.component';
 import { DropdownComponent } from './dropdown.component/dropdown.component';
-import { ItemsPerPageSelectorComponent } from './datatable/itemsPerPageSelector/itemsPerPageSelector';
+import { recordsPerPageSelectorComponent } from './datatable/recordsPerPageSelector/recordsPerPageSelector';
 import { PipesModule } from '../pipes.module';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { DialogComponent } from './dialog/dialog.component';
@@ -20,6 +20,7 @@ import { LoadingSpinnerComponent } from './loading-spinner/loading-spinner.compo
 import { SwitchComponent } from '../shared/switch/switch.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmationComponent } from './confirmation/confirmation.component';
+import { CommandPanel } from './command-panel/command-panel.component';
 
 @NgModule({
     imports: [
@@ -40,11 +41,12 @@ import { ConfirmationComponent } from './confirmation/confirmation.component';
         NgTableSortingDirective,
         //InfoPopupComponent,
         DropdownComponent,
-        ItemsPerPageSelectorComponent,
+        recordsPerPageSelectorComponent,
         ConfirmationComponent,
         DialogComponent,
         LoadingSpinnerComponent,
-        SwitchComponent
+        SwitchComponent,
+        CommandPanel
     ],
     exports: [
         FormsModule,
@@ -52,6 +54,7 @@ import { ConfirmationComponent } from './confirmation/confirmation.component';
         BrowserModule,
         NgSelectModule,
         ReactiveFormsModule,
+        NgbModal,
 
         TableComponent,
         NgTableComponent,
@@ -67,7 +70,7 @@ import { ConfirmationComponent } from './confirmation/confirmation.component';
         DialogComponent,
         LoadingSpinnerComponent,
         SwitchComponent,
-        NgbModal
+        CommandPanel
     ]
 })
 export class SharedModule {

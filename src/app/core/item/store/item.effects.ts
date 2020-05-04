@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { Observable, of } from 'rxjs';
-import { mergeMap, map, catchError, tap, switchMap, take, concatMap } from 'rxjs/operators';
+import { mergeMap, map, catchError, switchMap, concatMap } from 'rxjs/operators';
 
 import { Action } from '@ngrx/store';
 import { Actions, Effect, ofType } from '@ngrx/effects';
@@ -36,7 +36,7 @@ export class ItemEffects {
     mergeMap((item: Item) =>
       this.itemService.put(item.itemId, item).pipe(
         switchMap((updatedItem: any) => [new itemActions.SaveItemSuccess(item),
-                                         new recordActions.SetLastActionType('U')]),
+                                         new recordActions.SaveRecordSuccess()]),
         catchError(err => of(new recordActions.SetError(err)))
       )
     )
@@ -49,7 +49,7 @@ export class ItemEffects {
     mergeMap((item: Item) =>
       this.itemService.post(item).pipe(
         switchMap((newItem:any) => [new itemActions.AddItemSuccess(newItem),
-                                    new recordActions.SetLastActionType('A')]),
+                                    new recordActions.AddRecordSuccess()]),
         catchError(err => of(new recordActions.SetError(err)))
       )
     )
@@ -62,7 +62,7 @@ export class ItemEffects {
     concatMap((itemId: number) =>
       this.itemService.delete(itemId).pipe(
         switchMap((item:any) => [new itemActions.DeleteItemSuccess(item),
-                                 new recordActions.SetLastActionType('D')]),
+                                 new recordActions.DeleteRecordSuccess()]),
         catchError(err => of(new recordActions.SetError(err)))
       )
     )

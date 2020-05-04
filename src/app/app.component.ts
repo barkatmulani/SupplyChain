@@ -5,7 +5,9 @@ import { Store, select } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { RecordSelectors } from './store/record.selectors';
 import { ToastrService } from 'ngx-toastr';
-import { LoadItemListSuccess, LoadItemList } from './core/item/store/item.actions';
+import { LoadItemList } from './core/item/store/item.actions';
+import { filter } from 'rxjs/operators';
+import * as recordActions from './store/record.actions';
 
 @Component({
   selector: 'app-root',
@@ -18,6 +20,7 @@ export class AppComponent implements OnInit {
   title = 'Supply Chain Management System';
   loading: boolean;
   error$: Subscription;
+  history$: Subscription;
 
   constructor(private router: Router,
               private toastr: ToastrService,
@@ -28,6 +31,14 @@ export class AppComponent implements OnInit {
     this.router.events.subscribe((routerEvent: Event) => {
       this.checkRouterEvent(routerEvent);
     });
+
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe(({urlAfterRedirects}: NavigationEnd) => {
+        this.store.dispatch(new recordActions.AddToNavigationHistory(urlAfterRedirects.substr(1, urlAfterRedirects.length - 1)));
+      });
+
+    this.store.dispatch(new LoadItemList());
 
     this.error$ = this.store.pipe(select(RecordSelectors.getError)).subscribe(
       (error: any) => {

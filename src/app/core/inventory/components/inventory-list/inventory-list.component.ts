@@ -3,9 +3,9 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { Global } from '../../../../../global';
 import { ToastrService } from 'ngx-toastr';
 import { Store, select } from '@ngrx/store';
-import * as itemActions from '../../store/item.actions';
+import * as inventoryActions from '../../store/inventory.actions';
 import { ConfirmationComponent } from '../../../../shared/confirmation/confirmation.component';
-import { ItemSelectors } from '../../store/item.selectors'
+import { inventorySelectors } from '../../store/inventory.selectors'
 import { BaseListComponent } from '../../../base/base-list/base-list.component';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
@@ -13,21 +13,20 @@ import { Observable } from 'rxjs';
 
 @Component({
   moduleId: module.id,
-  templateUrl: './item-list.component.html',
+  templateUrl: './inventory-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 
-export class ItemListComponent extends BaseListComponent implements OnInit {
+export class InventoryListComponent extends BaseListComponent implements OnInit {
   rows$: Observable<Array<any>>;
 
   columns: Array<any> = [
-    { key: 'E', tooltip: 'Edit Item', imageUrl: 'assets/edit.png', width: '40px' },
-    { key: 'D', tooltip: 'Delete Item', imageUrl: 'assets/delete3.png', width: '40px' },
-    { title: 'Item Id', name: 'itemId', hidden: true },
-    { title: 'Item Description', name: 'itemDescription' },
+    { key: 'E', tooltip: 'Edit Inventory', imageUrl: 'assets/edit.png', width: '40px' },
+    { key: 'D', tooltip: 'Delete Inventory', imageUrl: 'assets/delete3.png', width: '40px' },
+    { title: 'Inventory Id', name: 'inventoryId', hidden: true },
+    { title: 'Inventory Description', name: 'inventoryDescription' },
     // filtering: {filterString: '', placeholder: 'Filter by descriiption'}, sort: 'asc'},
-    { title: 'Cost', name: 'cost' },
-    { title: 'Price', name: 'price' },
+    { title: 'Address', name: 'address' },
   ];
 
   config: any = {
@@ -42,16 +41,16 @@ export class ItemListComponent extends BaseListComponent implements OnInit {
               route: ActivatedRoute,
               toastr: ToastrService,
               store: Store) {
-    super(route, router, toastr, store, ItemSelectors);
+    super(route, router, toastr, store, inventorySelectors);
   }
 
   ngOnInit() {
     Global.stripFromUrl(4);
 
-    this.rows$ = this.store.pipe(select(ItemSelectors.getItems)).pipe(
+    this.rows$ = this.store.pipe(select(inventorySelectors.getInventorys)).pipe(
       map((rows: any[]) => {
-          const items = rows ? rows.map(item => ({...item, id: item.itemId })) : [];
-          return items;
+          const inventories = rows ? rows.map(inventory => ({...inventory, id: inventory.inventoryId })) : [];
+          return inventories;
       })
     );
   }
@@ -62,12 +61,12 @@ export class ItemListComponent extends BaseListComponent implements OnInit {
 
   public onCellClick(data: any): any {
     if(!data.selectedId) {
-      this.store.dispatch(new itemActions.UnselectItem());
+      this.store.dispatch(new inventoryActions.UnselectInventory());
       this.router.navigate([{ outlets: { detail: null }}]);
     }
     else {
-      this.store.dispatch(new itemActions.SelectItem(data.selectedId));
-      this.router.navigate([{ outlets: { detail: ['showItem', data.selectedId] }}]);
+      this.store.dispatch(new inventoryActions.SelectInventory(data.selectedId));
+      this.router.navigate([{ outlets: { detail: ['showInventory', data.selectedId] }}]);
     }
   }
 
@@ -75,9 +74,9 @@ export class ItemListComponent extends BaseListComponent implements OnInit {
     switch(data.name) {
       case 'E':
         if(this.navigationFlag)
-          this.router.navigate([{ outlets: { primary: ['item', data.rowId] }, detail: null }]);
+          this.router.navigate([{ outlets: { primary: ['inventory', data.rowId] }, detail: null }]);
         else
-          this.router.navigate([{ outlets: { detail: ['showItem', data.rowId] }}]);
+          this.router.navigate([{ outlets: { detail: ['showInventory', data.rowId] }}]);
         break;
 
       case 'D':
@@ -88,7 +87,7 @@ export class ItemListComponent extends BaseListComponent implements OnInit {
   }
 
   onSwitchToggle(value) {
-    this.store.dispatch(new itemActions.SetNavigationFlag(value));
+    this.store.dispatch(new inventoryActions.SetNavigationFlag(value));
 
     if(this.navigationFlag) {
       this.router.navigate([{ outlets: { detail: null }}]);
@@ -97,13 +96,13 @@ export class ItemListComponent extends BaseListComponent implements OnInit {
 
   public onAddClicked() {
     if(this.navigationFlag)
-      this.router.navigate([{ outlets: { primary: 'item' }, detail: null }]);
+      this.router.navigate([{ outlets: { primary: 'inventory' }, detail: null }]);
     else
-      this.router.navigate([{ outlets: { detail: 'showItem' }}]);
+      this.router.navigate([{ outlets: { detail: 'showInventory' }}]);
   }
 
   public onDeleteConfirm(id: number) {
-    this.store.dispatch(new itemActions.DeleteItem(this.recordId));
+    this.store.dispatch(new inventoryActions.DeleteInventory(this.recordId));
   }
 
   public onChangeTable(config: any) {
@@ -111,11 +110,11 @@ export class ItemListComponent extends BaseListComponent implements OnInit {
   }
 
   public onPageChanged(data: any) {
-    this.store.dispatch(new itemActions.SetPageNo(data.pageNo));
+    this.store.dispatch(new inventoryActions.SetPageNo(data.pageNo));
   }
 
   public onRecordsPerPageChanged(data: number) {
-    this.store.dispatch(new itemActions.SetRecordsPerPage(data));
-    this.store.dispatch(new itemActions.SetPageNo(1));
+    this.store.dispatch(new inventoryActions.SetRecordsPerPage(data));
+    this.store.dispatch(new inventoryActions.SetPageNo(1));
   }
 }

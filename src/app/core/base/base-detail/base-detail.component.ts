@@ -1,84 +1,74 @@
 import { Component, Input } from "@angular/core";
 import { NgbModal, NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 import { IBaseDetailComponent } from "./base-detail.interface";
-import { Subscription, Observable } from "rxjs";
+import { Subscription } from "rxjs";
 import { Store, select } from "@ngrx/store";
 import * as recordActions from "../../../store/record.actions";
 import { RecordSelectors } from "../../../store/record.selectors";
 import { ToastrService } from "ngx-toastr";
 import { Router } from "@angular/router";
-import { Global } from "../../../../global";
+import { Global, RecordActionType } from "../../../../global";
 
 @Component({
     templateUrl: 'base-detail.component.html'
 })
 export class BaseDetailComponent implements IBaseDetailComponent {
+    lastNavigationPath$: Subscription;
     lastActionType$: Subscription;
+    navigationFlag$: Subscription;
+    height: number;
 
     isDirty: boolean;
+    lastNavigationPath: string;
     lastActionType: string;
+    navigationFlag: boolean;
 
-    constructor(public modalService: NgbModal,
-                public store: Store,
+    constructor(public router: Router,
                 public toastr: ToastrService,
-                public router: Router) {
+                public store: Store,
+                public modalService: NgbModal,
+                public childSelectors: any) {
+                    
+        this.height = window.outerHeight;
 
+        this.lastNavigationPath$ = this.store.pipe(select(RecordSelectors.getLastNavigationPath)).subscribe(
+            (path: string) => {
+                console.log(path);
+                this.lastNavigationPath = path;
+            }
+        )
+
+        this.navigationFlag$ = this.store.pipe(select(this.childSelectors.navigationFlag))
+            .subscribe((navigationFlag: boolean) => this.navigationFlag = navigationFlag);
+        
         this.lastActionType$ = this.store.pipe(select(RecordSelectors.getLastActionType)).subscribe(
-            (type:string) => {
-                if (type) {
+            (type: string) => {
+                if (type && type !== RecordActionType.Delete) {
                     this.store.dispatch(new recordActions.ResetLastActionType());
                     this.store.dispatch(new recordActions.SetRecordUpdatedFlag());
                     Global.showNotification(type, this.toastr);
-                    this.router.navigate([{ outlets: { primary: 'items', detail: null } }]);
+                    if(this.navigationFlag)
+                        this.router.navigate([this.lastNavigationPath]);
+                    else
+                        this.router.navigate([{ outlets: { primary: this.lastNavigationPath, detail: null } }]);
                 }
             }
         );
-        // this.lastActionType$ = this.store.pipe(select(RecordSelectors.getLastActionType)).subscribe(
-        //     (type: string) => {
-        //         this.lastActionType = type;
-        //     });
-
-        // this.lastActionType$ = this.store.pipe(select(this.childSelectors.getLastActionType)).subscribe(
-        //     (type:string) => {
-        //         console.log(type)
-        //     if (type) {
-        //         let action: string;
-
-        //         this.lastActionType = type;
-
-        //         switch (type) {
-        //             case 'A': action = 'added'; break;
-        //             case 'U': action = 'updated'; break;
-        //             case 'D': action = 'deleted'; break;
-        //         }
-                
-        //         this.store.dispatch(new this.childActions.ResetLastActionType());
-        //         this.toastr.success(`Record ${action} successfully`, 'Success!');
-        //         this.router.navigate([{ outlets: { primary: navigationPath, detail: null } }]);
-        //     }}
-        // );
-
-        // this.recordChanged$ = this.store.pipe(select(RecordSelectors.getRecordChangeType))
-        //     .subscribe((type: any) => {
-        //         if (type) {
-        //             let action: string;
-
-        //             this.recordChangeType = type;
-        
-        //             switch (type) {
-        //                 case 'A': action = 'added'; break;
-        //                 case 'U': action = 'updated'; break;
-        //                 case 'D': action = 'deleted'; break;
-        //             }
-        
-        //             this.toastr.success(`Record ${action} successfully`, 'Success!');
-        //             this.store.dispatch(new recordActions.ResetRecordChangeType());
-        //             this.router.navigate([{ outlets: { primary: navigationPath, detail: null } }]);
-        //         }}
-        //     );
     }
-
-    destroy() {
+    
+    ngAfterViewInit() {
+        this.navigationFlag$ = this.store.pipe(select(this.childSelectors.navigationFlag)).subscribe(
+            flag => {
+                if(!flag) {
+                    window.scrollBy(0, this.height);
+                }
+            }
+        );
+    }
+    
+    ngOnDestroy() {
+        if(this.lastNavigationPath$) this.lastNavigationPath$.unsubscribe();
+        if(this.navigationFlag$) this.navigationFlag$.unsubscribe();
         if(this.lastActionType$) this.lastActionType$.unsubscribe();
     }
     
@@ -88,8 +78,8 @@ export class BaseDetailComponent implements IBaseDetailComponent {
         modalRef.componentInstance.message = 'Changes will be lost. Are you sure?';
         
         return modalRef.result.then(() => {
-                Global.showNotification('C', this.toastr);
-                return true
+            Global.showNotification('C', this.toastr);
+            return true
         }, () => false);
     }
 }

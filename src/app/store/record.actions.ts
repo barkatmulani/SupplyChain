@@ -1,6 +1,18 @@
 import { Action } from '@ngrx/store';
 import { RecordActionTypes } from '.';
 
+export class SaveRecordSuccess implements Action {
+    readonly type = RecordActionTypes.SaveRecord;
+}
+
+export class AddRecordSuccess implements Action {
+    readonly type = RecordActionTypes.AddRecord;
+}
+
+export class DeleteRecordSuccess implements Action {
+    readonly type = RecordActionTypes.DeleteRecord;
+}
+
 export class SetLastActionType implements Action {
     readonly type = RecordActionTypes.SetLastActionType;
 
@@ -19,14 +31,10 @@ export class ResetRecordUpdatedFlag implements Action {
     readonly type = RecordActionTypes.ResetRecordUpdatedFlag
 }
 
-export class SetNavigationPath implements Action {
-    readonly type = RecordActionTypes.SetNavigationPath;
+export class AddToNavigationHistory implements Action {
+    readonly type = RecordActionTypes.AddToNavigationHistory;
 
     constructor(public payload: string) { }
-}
-
-export class ResetNavigationPath implements Action {
-    readonly type = RecordActionTypes.ResetNavigationPath
 }
 
 export class SetError implements Action {
@@ -40,10 +48,12 @@ export class ResetError implements Action {
 }
 
 export type RecordListActions = SetLastActionType
+    | SaveRecordSuccess
+    | AddRecordSuccess
+    | DeleteRecordSuccess
     | ResetLastActionType
     | SetRecordUpdatedFlag
     | ResetRecordUpdatedFlag
-    | SetNavigationPath
-    | ResetNavigationPath
+    | AddToNavigationHistory
     | SetError
     | ResetError;

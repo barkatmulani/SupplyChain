@@ -15,7 +15,7 @@ There are only simple table with 3 plugins/directives: `filtering`, `paging`, `s
 ### Inputs (Properties)
 
 - `page` (`number`) - the default page after the table component loading
-- `itemsPerPage` (`number`) - number of the displaying items (rows) on a page
+- `recordsPerPage` (`number`) - number of the displaying items (rows) on a page
 - `maxSize` (`number`) - number of the displaying pages before `...`
 - `numPages` (`number`) - total number of the pages
 - `length` (`number`) - total number of the items after filtering (of it's chosen)
@@ -57,4 +57,4 @@ Data sorting could be in 3 modes: asc, desc and without sorting data (as it come
 
 ### Paging
 
-Pagination could be used from [ng2-bootstrap](https://github.com/valor-software/ng2-bootstrap) - [pagination component](http://valor-software.github.io/ng2-bootstrap/#pagination). When the page is changed, the pagination component will emit event `tableChanged` with an object {page, itemsPerPage}. Then you can easily subscribe on it and request corresponding raw data.
+Pagination could be used from [ng2-bootstrap](https://github.com/valor-software/ng2-bootstrap) - [pagination component](http://valor-software.github.io/ng2-bootstrap/#pagination). When the page is changed, the pagination component will emit event `tableChanged` with an object {page, recordsPerPage}. Then you can easily subscribe on it and request corresponding raw data.

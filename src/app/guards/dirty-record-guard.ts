@@ -38,11 +38,6 @@ export class DirtyRecordGuard implements CanDeactivate<IBaseDetailComponent> {
         currentRoute: ActivatedRouteSnapshot,
         currentState: RouterStateSnapshot,
         nextState?: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-        // this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
-        //     this.closeResult = `Closed with: ${result}`;
-        //   }, (reason) => {
-        //     this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-        //   });
 
         if(component.isDirty && !this.recordUpdatedFlag) {
             let result = component.confirmChangeLoss();

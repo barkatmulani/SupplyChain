@@ -4,21 +4,21 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { HttpHeaders } from '@angular/common/http';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { tap, map } from 'rxjs/operators';
-import { Observable, of, Subscription } from 'rxjs';
+import { Observable, of, EMPTY, Subscription } from 'rxjs';
 import { BaseDetailComponent } from '../../../base/base-detail/base-detail.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Global } from '../../../../../global';
 import { Store, select } from '@ngrx/store';
-import * as itemActions from '../../store/item.actions';
-import { ItemSelectors } from '../../store/item.selectors';
+import * as vendorActions from '../../store/vendor.actions';
+import { VendorSelectors } from '../../store/vendor.selectors';
 
 @Component({
-  selector: 'item',
+  selector: 'vendor',
   moduleId: module.id,
-  templateUrl: 'item-detail.component.html',
+  templateUrl: 'vendor-detail.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ItemComponent extends BaseDetailComponent implements OnInit {
+export class VendorComponent extends BaseDetailComponent implements OnInit {
   frmMain: FormGroup;
   data$: Observable<any>;
   recordUpdated$: Subscription;
@@ -31,30 +31,29 @@ export class ItemComponent extends BaseDetailComponent implements OnInit {
               public modalService: NgbModal,
               public store: Store)
   {
-    super(router, toastr, store, modalService, ItemSelectors);
+    super(router, toastr, store, modalService, VendorSelectors);
   }
 
   ngOnInit() {
-    this.frmMain = this.fb.group({
-      itemId: 0,
-      active: true,
-      itemDescription: ['', Validators.required],
-      cost: '',
-      price: ''
+    this.frmMain = this.fb.group ({
+      vendorId: 0,
+      vendorName: ['', [Validators.required]],
+      address: '',
+      phoneNo: ''
     });
     
     const id = this.route.snapshot.params.id;
     
     if (id) {
       this.data$ = this.route.data.pipe(
-        map(data => (data.resolvedItem.item)),
+        map(data => (data.resolvedVendor.vendor)),
         tap(data => this.loadData(data)));
     }
     else {
       this.data$ = of({});
     }
 
-    this.onError$ = this.store.pipe(select(ItemSelectors.error)).subscribe(
+    this.onError$ = this.store.pipe(select(VendorSelectors.error)).subscribe(
         error => {
             if(error) this.toastr.error(error.message, 'Error!');
         }
@@ -65,33 +64,38 @@ export class ItemComponent extends BaseDetailComponent implements OnInit {
 
   loadData(data: any) {
     this.frmMain.patchValue({
-      itemId: data.itemId,
-      itemDescription: data.itemDescription,
-      cost: data.cost,
-      price: data.price
+      vendorId: data.vendorId,
+      vendorName: data.vendorName,
+      address: data.address,
+      phoneNo: data.phoneNo
     });
-    this.frmMain.markAsPristine();
   }
 
   onSave() {
-    let item = {
-      itemId: this.frmMain.get('itemId').value,
-      active: true,
-      itemDescription: this.frmMain.get('itemDescription').value,
-      cost: this.frmMain.get('cost').value,
-      price: this.frmMain.get('price').value
-    };
+    let vendor = { vendorId: this.frmMain.get('vendorId').value,
+                   active: true,
+                   vendorName: this.frmMain.get('vendorName').value,
+                   address: this.frmMain.get('address').value,
+                   phoneNo: this.frmMain.get('phoneNo').value
+                 };
+
+    let httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json',
+        'Authorization': 'my-auth-token',
+        'Access-Control-Allow-Origin': '*'
+      })};
     
-    if(item.itemId === 0) {
-        this.store.dispatch(new itemActions.AddItem(item));
+      if(vendor.vendorId === 0) {
+        this.store.dispatch(new vendorActions.AddVendor(vendor));
     }
     else {
-        this.store.dispatch(new itemActions.SaveItem(item));
+        this.store.dispatch(new vendorActions.SaveVendor(vendor));
     }
   }
 
   onCancel() {
-    this.router.navigate([{ outlets: { primary: 'items', detail: null }}]);
+    this.router.navigate([{ outlets: { primary: 'vendors', detail: null }}]);
   }
 
   get isDirty(): boolean {

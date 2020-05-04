@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 //import { NgTableComponent, NgTableFilteringDirective, NgTablePagingDirective, NgTableSortingDirective } from 'ng2-table/ng2-table';
 var core_1 = require("@angular/core");
 var ng_table_component_1 = require("./datatable/table/ng-table.component");
-var itemsPerPageSelector_1 = require("./itemsPerPageSelector/itemsPerPageSelector");
+var recordsPerPageSelector_1 = require("./recordsPerPageSelector/recordsPerPageSelector");
 var ng2_bootstrap_1 = require("ng2-bootstrap");
 var TableComponent = /** @class */ (function () {
     function TableComponent() {
@@ -45,7 +45,7 @@ var TableComponent = /** @class */ (function () {
         this.sortColumnClicked = new core_1.EventEmitter();
         this.increaseSortOrderClicked = new core_1.EventEmitter();
         this.decreaseSortOrderClicked = new core_1.EventEmitter();
-        this.itemsPerPageChanged = new core_1.EventEmitter();
+        this.recordsPerPageChanged = new core_1.EventEmitter();
         this.cellValueChanged = new core_1.EventEmitter();
         this.blur = new core_1.EventEmitter();
         this.selectedIds = [];
@@ -79,8 +79,8 @@ var TableComponent = /** @class */ (function () {
     };
     TableComponent.prototype.changePage = function (page, data) {
         if (data === void 0) { data = this.data; }
-        var start = (page.page - 1) * page.itemsPerPage;
-        var end = page.itemsPerPage > -1 ? (start + page.itemsPerPage) : data.length;
+        var start = (page.page - 1) * page.recordsPerPage;
+        var end = page.recordsPerPage > -1 ? (start + page.recordsPerPage) : data.length;
         return data.slice(start, end);
     };
     TableComponent.prototype.changeSort = function (data, config) {
@@ -160,11 +160,11 @@ var TableComponent = /** @class */ (function () {
         return filteredData;
     };
     TableComponent.prototype.onChangeTable = function (config, page) {
-        if (page === void 0) { page = { page: this.page, itemsPerPage: this.itemsPerPage }; }
+        if (page === void 0) { page = { page: this.page, recordsPerPage: this.recordsPerPage }; }
         if (this.totalRows > 0) {
             if (page.page != this.prevPage) {
                 this.prevPage = page.page;
-                this.pageChanged.emit({ pageNo: page.page, itemsPerPage: this.itemsPerPage });
+                this.pageChanged.emit({ pageNo: page.page, recordsPerPage: this.recordsPerPage });
             }
             else {
                 this.rows = this.data;
@@ -183,16 +183,16 @@ var TableComponent = /** @class */ (function () {
             this.length = sortedData.length;
         }
     };
-    TableComponent.prototype.onItemsPerPageChanged = function (itemsPerPage) {
+    TableComponent.prototype.onrecordsPerPageChanged = function (recordsPerPage) {
         if (this.totalRows === 0) {
-            this.numPages = parseInt((this.tableData.length / this.itemsPerPage).toString()) + (this.tableData.length % this.itemsPerPage > 0 ? 1 : 0);
-            this.onChangeTable({}, { page: 1, itemsPerPage: this.itemsPerPage });
+            this.numPages = parseInt((this.tableData.length / this.recordsPerPage).toString()) + (this.tableData.length % this.recordsPerPage > 0 ? 1 : 0);
+            this.onChangeTable({}, { page: 1, recordsPerPage: this.recordsPerPage });
         }
         else
-            this.pageChanged.emit({ pageNo: 1, itemsPerPage: this.itemsPerPage });
+            this.pageChanged.emit({ pageNo: 1, recordsPerPage: this.recordsPerPage });
     };
     TableComponent.prototype.onSortTable = function (config, page) {
-        if (page === void 0) { page = { page: this.page, itemsPerPage: this.itemsPerPage }; }
+        if (page === void 0) { page = { page: this.page, recordsPerPage: this.recordsPerPage }; }
         // Initial sorting is removed as soon as manual sorting clicked
         if (config.initialSorting != null) {
             config.initialSorting = null;
@@ -253,9 +253,9 @@ var TableComponent = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(TableComponent.prototype, "itemsPerPage", {
+    Object.defineProperty(TableComponent.prototype, "recordsPerPage", {
         get: function () {
-            return this.itemsPerPageSelector.itemsPerPage;
+            return this.recordsPerPageSelector.recordsPerPage;
         },
         enumerable: true,
         configurable: true
@@ -413,7 +413,7 @@ var TableComponent = /** @class */ (function () {
     __decorate([
         core_1.Output(),
         __metadata("design:type", core_1.EventEmitter)
-    ], TableComponent.prototype, "itemsPerPageChanged", void 0);
+    ], TableComponent.prototype, "recordsPerPageChanged", void 0);
     __decorate([
         core_1.Output(),
         __metadata("design:type", core_1.EventEmitter)
@@ -427,9 +427,9 @@ var TableComponent = /** @class */ (function () {
         __metadata("design:type", ng_table_component_1.NgTableComponent)
     ], TableComponent.prototype, "ngTableComponent", void 0);
     __decorate([
-        core_1.ViewChild('itemsPerPageSelector'),
-        __metadata("design:type", itemsPerPageSelector_1.ItemsPerPageSelectorComponent)
-    ], TableComponent.prototype, "itemsPerPageSelector", void 0);
+        core_1.ViewChild('recordsPerPageSelector'),
+        __metadata("design:type", recordsPerPageSelector_1.recordsPerPageSelectorComponent)
+    ], TableComponent.prototype, "recordsPerPageSelector", void 0);
     __decorate([
         core_1.ViewChild('pagination'),
         __metadata("design:type", ng2_bootstrap_1.PagerComponent)

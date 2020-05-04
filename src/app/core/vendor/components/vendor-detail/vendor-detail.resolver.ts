@@ -1,9 +1,9 @@
 import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot } from "@angular/router"
 import { Injectable } from "@angular/core";
-import { VendorService } from "../../../services/common.services";
+import { VendorService } from "../../../../services/common.services";
 import { catchError, map, tap } from "rxjs/operators";
 import { of } from "rxjs";
-import { ResolvedVendor } from '../../../models/Vendor.model';
+import { ResolvedVendor } from '../../../../models/Vendor.model';
 
 @Injectable({
     providedIn: 'root',
@@ -16,7 +16,6 @@ export class VendorResolver implements Resolve<ResolvedVendor> {
 
         if (isNaN(id)) {
             const message = 'Provided id ' + id + ' is not a number';
-            console.log(message);
             return of({ vendor: null, error: message });
         }
 

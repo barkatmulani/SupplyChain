@@ -17,7 +17,7 @@ export class PurchaseOrderListComponent implements OnInit, OnChanges {
   rows: Array<any> = []; // = TableData;
   pageNo: number = 1;
   numPages = 1;
-  itemsPerPage = 10;
+  recordsPerPage = 10;
   maxSize = 5;
   rowCount = 0;
   mode = 'P';

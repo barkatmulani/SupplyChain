@@ -35,15 +35,15 @@
     </ng-table>
 </div>
 
-<div class="col-xs-12 col-sm-6">
-    <div [ngStyle]="{ 'display': showPaging ? '' : 'none' }">
+<div class="row m-0">
+    <div [ngStyle]="{ 'display': showPaging ? '' : 'none' }" class="col-xs-12 col-sm-6">
         <pagination #pagination
                     previousText="&lsaquo;" nextText="&rsaquo;" firstText="&laquo;" lastText="&raquo;"
                     [boundaryLinks]="true"
                     [directionLinks]="true"
                     [(ngModel)]="page"
                     [totalItems]="length"
-                    [itemsPerPage]="itemsPerPage"
+                    [itemsPerPage]="recordsPerPage"
                     [maxSize]="maxSize"
                     [boundaryLinks]="true"
                     [rotate]="false"
@@ -52,11 +52,12 @@
         </pagination>
     </div>
 
-        <!--<pre *ngIf="config.paging" class="card card-block card-header">Page: {{page}} / {{numPages}}</<!--<pre *ngIf="config.paging" class="card card-block card-header">Page: {{page}} / {{numPages}}</pre>-->
-    <itemsperpageselector #itemsPerPageSelector
-                          class="col-xs-12 col-sm-6"
-                          [ngStyle]="{'display': (totalRows > 10) || (tableData && tableData.length > 10) ? '' : 'none'}"
-                          (itemsPerPageChanged)="onItemsPerPageChanged($event)">
-    </itemsperpageselector>
+    <!--<pre *ngIf="config.paging" class="card card-block card-header">Page: {{page}} / {{numPages}}</<!--<pre *ngIf="config.paging" class="card card-block card-header">Page: {{page}} / {{numPages}}</pre>-->
 
+    <recordsPerPageselector #recordsPerPageSelector
+                            class="col-xs-12 col-sm-6"
+                            [recordsPerPage]="recordsPerPage"
+                            [ngStyle]="{'display': (totalRows > 10) || (tableData && tableData.length > 10) ? '' : 'none'}"
+                            (recordsPerPageChanged)="onrecordsPerPageChanged($event)">
+    </recordsPerPageselector>
 </div>

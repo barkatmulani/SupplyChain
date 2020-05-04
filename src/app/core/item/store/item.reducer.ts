@@ -9,6 +9,12 @@ export function ItemReducer (state = itemListInitialState, action: ItemListActio
                 pageNo: action.payload
             }
 
+        case ItemActionTypes.SetRecordsPerPage:
+            return {
+                ...state,
+                recordsPerPage: action.payload
+            }
+    
         case ItemActionTypes.SelectItem:
             return {
                 ...state,

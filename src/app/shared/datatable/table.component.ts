@@ -1,7 +1,7 @@
 ﻿// import { NgTableComponent, NgTableFilteringDirective, NgTablePagingDirective, NgTableSortingDirective } from 'ng2-table/ng2-table';
 import { Component, Input, Output, EventEmitter, OnInit, OnChanges, ViewChild, AfterViewInit, AfterViewChecked, OnDestroy } from '@angular/core';
 //import { PaginationComponent } from 'ngx-bootstrap';
-//import { ItemsPerPageSelectorComponent } from './itemsPerPageSelector/itemsPerPageSelector';
+//import { recordsPerPageSelectorComponent } from './recordsPerPageSelector/recordsPerPageSelector';
 import { NgTableComponent } from './table/ng-table.component';
 
 @Component({
@@ -21,6 +21,7 @@ export class TableComponent implements OnInit, OnChanges {
     @Input() allowSorting: boolean = true;
     @Input() allowAddition: boolean = false;
     @Input() disabled: boolean = false;
+    @Input() recordsPerPage: number;
 
     @Input() showFilterRow: boolean = true;
     @Input() showTotals: boolean = false;
@@ -52,12 +53,12 @@ export class TableComponent implements OnInit, OnChanges {
     @Output() sortColumnClicked: EventEmitter<string> = new EventEmitter();
     @Output() increaseSortOrderClicked: EventEmitter<string> = new EventEmitter();
     @Output() decreaseSortOrderClicked: EventEmitter<string> = new EventEmitter();
-    @Output() itemsPerPageChanged: EventEmitter<any> = new EventEmitter();
+    @Output() recordsPerPageChanged: EventEmitter<any> = new EventEmitter();
     @Output() cellValueChanged: EventEmitter<any> = new EventEmitter();
     @Output() blur: EventEmitter<any> = new EventEmitter();
 
     @ViewChild(NgTableComponent) ngTableComponent: NgTableComponent;
-    //@ViewChild('itemsPerPageSelector') itemsPerPageSelector: ItemsPerPageSelectorComponent;
+    //@ViewChild('recordsPerPageSelector') recordsPerPageSelector: recordsPerPageSelectorComponent;
     //@ViewChild('pagination') pagination: PaginationComponent;
 
     selectedIds: any[] = [];
@@ -109,8 +110,8 @@ export class TableComponent implements OnInit, OnChanges {
     }
 
     public changePage(page: any, data: Array<any> = this.data): Array<any> {
-        const start = (page.page - 1) * page.itemsPerPage;
-        const end = page.itemsPerPage > -1 ? (start + page.itemsPerPage) : data.length;
+        const start = (page.page - 1) * page.recordsPerPage;
+        const end = page.recordsPerPage > -1 ? (start + page.recordsPerPage) : data.length;
         return data.slice(start, end);
     }
 
@@ -195,11 +196,11 @@ export class TableComponent implements OnInit, OnChanges {
         return filteredData;
     }
 
-    public onChangeTable(config: any, page: any = { page: this.page, itemsPerPage: this.itemsPerPage }): any {
+    public onChangeTable(config: any, page: any = { page: this.page, recordsPerPage: this.recordsPerPage }): any {
         if (this.totalRows > 0) {
             if (page.page !== this.prevPage) {
                 this.prevPage = page.page;
-                this.pageChanged.emit({ pageNo: page.page, itemsPerPage: this.itemsPerPage });
+                this.pageChanged.emit({ pageNo: page.page, recordsPerPage: this.recordsPerPage });
             }
             else {
                 this.rows = this.data;
@@ -219,20 +220,22 @@ export class TableComponent implements OnInit, OnChanges {
             this.rows = page && this.showPaging ? this.changePage(page, sortedData) : sortedData;
             this.length = sortedData.length;// === 0 ? 100000 : sortedData.length;
             this.setPage(parseInt(page.page));
-            this.pageChanged.emit({ pageNo: page.page, itemsPerPage: this.itemsPerPage });
+            this.pageChanged.emit({ pageNo: page.page, recordsPerPage: this.recordsPerPage });
         }
     }
 
-    public onItemsPerPageChanged(itemsPerPage: number) {
+    public onrecordsPerPageChanged(recordsPerPage: number) {
+        this.recordsPerPage = recordsPerPage;
         if (this.totalRows === 0) {
-            this.numPages = parseInt((this.tableData.length / this.itemsPerPage).toString()) + (this.tableData.length % this.itemsPerPage > 0 ? 1 : 0);
-            this.onChangeTable({}, { page: 1, itemsPerPage: this.itemsPerPage });
+            this.numPages = parseInt((this.tableData.length / this.recordsPerPage).toString()) + (this.tableData.length % this.recordsPerPage > 0 ? 1 : 0);
+            this.onChangeTable({}, { page: 1, recordsPerPage: this.recordsPerPage });
+            this.recordsPerPageChanged.emit(recordsPerPage);
         }
         else
-            this.pageChanged.emit({ pageNo: 1, itemsPerPage: this.itemsPerPage });
+            this.pageChanged.emit({ pageNo: 1, recordsPerPage: this.recordsPerPage });
     }
 
-    public onSortTable(config: any, page: any = { page: this.page, itemsPerPage: this.itemsPerPage }): any {
+    public onSortTable(config: any, page: any = { page: this.page, recordsPerPage: this.recordsPerPage }): any {
         // Initial sorting is removed as soon as manual sorting clicked
         if (config.initialSorting != null) {
             config.initialSorting = null;
@@ -309,10 +312,10 @@ export class TableComponent implements OnInit, OnChanges {
         return this.ngTableComponent.allRowsValid;
     }
 
-    public get itemsPerPage(): number {
-        //return this.itemsPerPageSelector.itemsPerPage;
-        return 10;
-    }
+    // public get recordsPerPage(): number {
+    //     //return this.recordsPerPageSelector.recordsPerPage;
+    //     return 10;
+    // }
 
     public get totals() {
         return this.ngTableComponent.totals;

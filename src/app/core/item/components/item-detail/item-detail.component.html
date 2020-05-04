@@ -1,10 +1,10 @@
-<form *ngIf="data$ | async" [formGroup]="frmItem">
+<form *ngIf="data$ | async" [formGroup]="frmMain">
     <div class="panel panel-primary scms">
         <div class="panel-heading">Manage Item</div>
         <div class="panel-body">
             <div class="col-sm-12">
                 <div class="form-group"
-                    [ngClass]="{'has-error': frmItem.controls.itemDescription.invalid && frmItem.controls.itemDescription.dirty}">
+                    [ngClass]="{'has-error': frmMain.controls.itemDescription.invalid && frmMain.controls.itemDescription.dirty}">
                     <label for="itemDesc">Item Description</label>
                     <input class="form-control" formControlName="itemDescription">
                 </div>
@@ -22,18 +22,7 @@
                 </div>
             </div>
 
-            <div class="col-sm-12 text-right my-3">
-                <button class="pull-right btn btn-primary mx-2"
-                        [ngClass]="{'disabled': frmItem.invalid || !frmItem.dirty}"
-                        [disabled]="!frmItem.dirty"
-                        (click)="onSave()">
-                    Save
-                </button>
-                <button class="pull-right btn btn-light btn-outline-dark"
-                        (click)="onCancel()">
-                    Cancel
-                </button>
-            </div>
+            <command-panel (save)="onSave($event)" (cancel)="onCancel($event)" [disabled]="frmMain.invalid || !frmMain.dirty"></command-panel>
         </div>
     </div>
 </form>

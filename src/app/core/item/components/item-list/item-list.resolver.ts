@@ -1,28 +1,27 @@
 import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, ActivatedRoute } from "@angular/router"
 import { Injectable } from "@angular/core";
-import { ItemService } from "../../../../services/common.services";
-import { catchError, map, tap, take } from "rxjs/operators";
-import { of, pipe } from "rxjs";
-import { ResolvedItemList, Item } from '../../../../models/item.model';
+import { of, Subscription } from "rxjs";
+import { ResolvedItemList } from '../../../../models/item.model';
 import { Store, select } from "@ngrx/store";
 import { LoadItemList } from "../../store/item.actions";
-import { itemSelectors } from "../../store/item.selectors";
-import { ToastrService } from "ngx-toastr";
+import { ItemSelectors } from "../../store/item.selectors";
+
 
 @Injectable({
     providedIn: 'root',
 })
 export class ItemListResolver implements Resolve<ResolvedItemList> {
+    itemCount$: Subscription;
     itemCount: number;
 
     constructor(private store: Store) { }
     
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-        this.store.pipe(select(itemSelectors.getItems)).subscribe(items => {
+        this.itemCount$ = this.store.pipe(select(ItemSelectors.getItems)).subscribe(items => {
             this.itemCount = items ? items.length : 0;
         });
 
-        this.store.dispatch(new LoadItemList());
+        //this.store.dispatch(new LoadItemList());
 
         return of({ count: this.itemCount });
 

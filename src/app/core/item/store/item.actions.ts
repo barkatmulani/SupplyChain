@@ -24,6 +24,12 @@ export class SetPageNo implements Action {
     constructor(public payload: number) { }
 };
 
+export class SetRecordsPerPage implements Action {
+    readonly type = ItemActionTypes.SetRecordsPerPage
+
+    constructor(public payload: number) { }
+};
+
 export class SelectItem implements Action {
     readonly type = ItemActionTypes.SelectItem
 
@@ -106,6 +112,7 @@ export class ResetLastActionType implements Action {
 }
 
 export type ItemListActions = SetPageNo
+    | SetRecordsPerPage
     | LoadItemList
     | LoadItemListSuccess
     | LoadItemListFail

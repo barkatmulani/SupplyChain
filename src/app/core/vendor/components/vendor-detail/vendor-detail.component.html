@@ -1,11 +1,10 @@
-<header></header>
-<form *ngIf="data$ | async" [formGroup]="frmVendor">
+<form *ngIf="data$ | async" [formGroup]="frmMain">
     <div class="panel panel-primary scms">
         <div class="panel-heading">Manage Vendor</div>
         <div class="panel-body">
             <div class="col-sm-12">
                 <div class="form-group"
-                    [ngClass]="{'has-error': frmVendor.controls.vendorName.invalid && frmVendor.controls.vendorName.dirty}">
+                    [ngClass]="{'has-error': frmMain.controls.vendorName.invalid && frmMain.controls.vendorName.dirty}">
                     <label>Name</label>
                     <input class="form-control" formControlName="vendorName">
                 </div>
@@ -23,13 +22,7 @@
                 </div>
             </div>
 
-            <div class="col-sm-12">
-                <button class="pull-right btn btn-primary"
-                        (click)="onCancel()">Cancel</button>
-                <button class="pull-right btn btn-primary"
-                        [ngClass]="{'disabled': frmVendor.invalid}"
-                        (click)="onSave()">Save</button>
-            </div>
+            <command-panel (save)="onSave($event)" (cancel)="onCancel($event)" [disabled]="frmMain.invalid || !frmMain.dirty"></command-panel>
         </div>
     </div>
 </form>

@@ -2,6 +2,7 @@ import { Item } from "../../../models/item.model";
 
 export enum ItemActionTypes {
     SetPageNo = '[Item] Set Page No',
+    SetRecordsPerPage = '[Item] Set Records Per Page',
     SetItems = '[Item] Set Items',
     SelectItem = '[Item] Select Item',
     UnselectItem = '[Item] Unselect Item',
@@ -28,6 +29,7 @@ export enum ItemActionTypes {
 
 export interface ItemListState {
     pageNo: number,
+    recordsPerPage: number,
     items: Item[],
     itemResult: { items: Item[], error: any }
     selectedItemId: number | null;
@@ -38,6 +40,7 @@ export interface ItemListState {
 
 export const itemListInitialState: ItemListState = {
     pageNo: 1,
+    recordsPerPage: 10,
     items: null,
     itemResult: {items: [], error: {}},
     selectedItemId: null,
