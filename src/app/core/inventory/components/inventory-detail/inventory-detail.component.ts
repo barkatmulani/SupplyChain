@@ -55,8 +55,16 @@ export class InventoryComponent extends BaseDetailComponent implements OnInit {
     
     if (id) {
       this.data$ = this.route.data.pipe(
-        map(data => (data.resolvedInventory.inventory)),
-        tap(data => this.loadData(data)));
+        map(data => (data.resolvedInventory)),
+        tap(data => {
+          if(data.inventory) {
+            this.loadData(data.inventory);
+          }
+          else {
+            super.handleError(data);
+            this.frmMain.disable();
+          }
+        }));
     }
     else {
       this.data$ = of({});
@@ -112,7 +120,10 @@ export class InventoryComponent extends BaseDetailComponent implements OnInit {
   }
 
   onCancel() {
-    this.router.navigate([{ outlets: { primary: 'inventories', detail: null }}]);
+    if(this.navigationFlag)
+      this.router.navigate([this.lastNavigationPath]);
+    else
+      this.router.navigate([{ outlets: { primary: this.lastNavigationPath, detail: null } }]);
   }
 
   get isDirty(): boolean {

@@ -21,7 +21,7 @@ export class ItemListResolver implements Resolve<ResolvedItemList> {
             this.itemCount = items ? items.length : 0;
         });
 
-        //this.store.dispatch(new LoadItemList());
+        this.store.dispatch(new LoadItemList());
 
         return of({ count: this.itemCount });
 

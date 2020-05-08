@@ -18,7 +18,8 @@
                         (pageChanged)="onPageChanged($event)"
                         (linkClicked)="onLinkClicked($event)"
                         (cellClicked)="onCellClick($event)"
-                        [tableData]="rows" [columns]="columns">
+                        [tableData]="rows$ | async"
+                        [columns]="columns">
             </datatable>
         </div>
     </div>
@@ -33,13 +34,12 @@
                 [message]="'Are you sure you want to post this record?'"
                 (confirm)="onPostConfirm($event)">
 </confirmation>
+<!-- 
+<purchaseorder  [purchaseOrderId]="purchaseOrderId"
+[mode]="'V'"
+(click)="onClose()"
+>
+</purchaseorder> -->
 
-<app-dialog [(visible)]="poDialogVisible">
-    <div class="modal-body">
-        <purchaseorder  [purchaseOrderId]="purchaseOrderId"
-                        [mode]="'V'"
-                        (click)="onClose()"
-                        >
-        </purchaseorder>
-    </div>
-</app-dialog>
+
+<!-- <purchaseorder [data]="row"></purchaseorder> -->

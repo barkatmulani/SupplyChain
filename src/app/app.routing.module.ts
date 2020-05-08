@@ -1,7 +1,5 @@
 import { NgModule } from '@angular/core';
 
-import { PurchaseOrderComponent } from './core/purchaseorder-detail/purchaseorder-detail.component';
-import { PurchaseOrderListComponent } from './core/purchaseorder-list/purchaseorder-list.component';
 import { ReceiptListComponent } from './core/receipt-list/receipt-list.component';
 import { ReceiptComponent } from './core/receipt/receipt.component';
 import { HomepageModule } from './core/homepage/homepage.module';
@@ -9,22 +7,16 @@ import { ItemModule } from './core/item/item.module';
 import { RouterModule, Routes } from '@angular/router';
 import { InventoryModule } from './core/inventory/inventory.module';
 import { VendorModule } from './core/vendor/vendor.module';
+import { PurchaseOrderModule } from './core/purchaseorder/purchaseorder.module';
 
 const appRoutes: Routes = [
-
-  /***** Purchase Order *****/
-  { path: 'purchaseorder-list/:pageNo', component: PurchaseOrderListComponent, data: { mode: 'L' } },
-  { path: 'purchaseorder-list', component: PurchaseOrderListComponent, data: { mode: 'L' } },
-  { path: 'purchaseorder/:id/:pageNo', component: PurchaseOrderComponent },
-  { path: 'purchaseorder/:id', component: PurchaseOrderComponent },
-  { path: 'purchaseorder', component: PurchaseOrderComponent },
   
-  /***** Post Purchase Order *****/
-  { path: 'purchaseorder-post/:pageNo', component: PurchaseOrderListComponent, data: { mode: 'P' } },
-  { path: 'purchaseorder-post', component: PurchaseOrderListComponent, data: { mode: 'P' } },
-  { path: 'purchaseorder/:id/:pageNo', component: PurchaseOrderComponent },
-  { path: 'purchaseorder/:id', component: PurchaseOrderComponent },
-  { path: 'purchaseorder', component: PurchaseOrderComponent },
+  // /***** Post Purchase Order *****/
+  // { path: 'purchaseorder-post/:pageNo', component: PurchaseOrderListComponent, data: { mode: 'P' } },
+  // { path: 'purchaseorder-post', component: PurchaseOrderListComponent, data: { mode: 'P' } },
+  // { path: 'purchaseorder/:id/:pageNo', component: PurchaseOrderComponent },
+  // { path: 'purchaseorder/:id', component: PurchaseOrderComponent },
+  // { path: 'purchaseorder', component: PurchaseOrderComponent },
 
   /***** Inventory Receipt *****/
   { path: 'receipt-list/:pageNo', component: ReceiptListComponent, data: { mode: 'L' } },
@@ -43,8 +35,6 @@ const appRoutes: Routes = [
 
 @NgModule({
   declarations: [
-    PurchaseOrderComponent,
-    PurchaseOrderListComponent,
     ReceiptComponent,
     ReceiptListComponent
   ],
@@ -53,19 +43,17 @@ const appRoutes: Routes = [
     ItemModule,
     InventoryModule,
     VendorModule,
+    PurchaseOrderModule,
     RouterModule.forRoot(
       appRoutes,
       { enableTracing: false }, // <-- debugging purposes only
     ),
   ],
   exports: [
-    PurchaseOrderComponent,
-    PurchaseOrderListComponent,
     ReceiptComponent,
     RouterModule,
     ReceiptListComponent,
-    HomepageModule,
-    ItemModule
+    HomepageModule
   ]
 })
 

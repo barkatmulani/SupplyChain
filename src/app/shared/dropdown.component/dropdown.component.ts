@@ -2,48 +2,48 @@
 import { TextValuePair } from './TextValuePair';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
-const CUSTOM_INPUT_CONTROL_VALUE_ACCESSOR: any = {
-    provide: NG_VALUE_ACCESSOR,
-    multi: true,
-    useExisting: forwardRef(() => DropdownComponent)
-};
-
 @Component({
     selector: 'dropdown',
     moduleId: module.id,
     templateUrl: 'dropdown.component.html',
-    providers: [CUSTOM_INPUT_CONTROL_VALUE_ACCESSOR]
+    providers: [
+        {
+            provide: NG_VALUE_ACCESSOR,
+            multi: true,
+            useExisting: forwardRef(() => DropdownComponent)
+        }
+    ]
 })
 
-export class DropdownComponent implements ControlValueAccessor, OnInit, OnChanges {
-    myValue: string;
+export class DropdownComponent implements ControlValueAccessor {
+    selectedValue: any;
 
     @Input() title: string;
     @Input() showTooltip: boolean;
     @Input() disabled: boolean = false;
     @Input() showLabel: boolean = false;
-    @Input() selectedValue: string = '';
     @Input() items: TextValuePair[] = [new TextValuePair('', '', '')];
     @Output() onSelected: EventEmitter<string> = new EventEmitter();
 
-    ngOnInit(): void {
-    }
-
-    ngOnChanges(): void {
-        this.value = this.selectedValue;
-    }
-
-    onChanged(): void {
-        this.onSelected.emit(this.value);
+    onChanged(value: any): void {
+        console.log('Value changed to ', value)
+        this.value = value;
+        this.propagateChange(value);
     }
 
     writeValue(obj: any): void {
-        this.myValue = obj;
+        if(!obj)
+            this.selectedValue = null
+        else if(isNaN(obj))
+            this.selectedValue = obj;
+        else
+            this.selectedValue = this.getValueFromList(obj);
     }
 
     registerOnChange(fn: any): void {
-        this.propagateChange = fn;
+        this.onChanged = fn;
     }
+    
     registerOnTouched(fn: any): void {
 
     }
@@ -55,22 +55,23 @@ export class DropdownComponent implements ControlValueAccessor, OnInit, OnChange
     }
 
     get value(): any {
-        if (!this.items || this.items.length === 0) this.value = ''; //console.log(this.title + ': ' + this.myValue)
-        return this.myValue;
+        return this.selectedValue ? this.selectedValue.value : -1;
     }
+
     set value(v: any) {
-        if (v !== this.myValue) {
-            this.myValue = v;
-            this.propagateChange(v);
+        if (v && (!this.selectedValue || v !== this.selectedValue.value)) {
+            this.selectedValue = this.getValueFromList(v);
+            this.onSelected.emit(v);
         }
     }
 
     get tooltip(): string {
-        let retVal: string = '';
-        if (this.showTooltip && this.items && this.items.length > 0) {
-            let val = this.items.filter(x => x.value === this.myValue)[0];
-            if (val) retVal = val.text;
-        }
-        return retVal;
+        return this.selectedValue ? this.selectedValue.tooltip : '';
+    }
+
+    private getValueFromList(obj: any) {
+        return this.items && this.items.length
+                ? this.items.find(x => x.value == obj)
+                : null;
     }
 }

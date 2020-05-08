@@ -2,7 +2,6 @@ import { Observable, throwError } from "rxjs";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Global } from "../../global";
 import { Injectable } from "@angular/core";
-import { tap, catchError, map } from "rxjs/operators";
 
 @Injectable()
 export abstract class ApiService {

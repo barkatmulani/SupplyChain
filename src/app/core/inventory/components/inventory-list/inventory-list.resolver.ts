@@ -15,7 +15,7 @@ export class InventoryListResolver implements Resolve<ResolvedInventoryList> {
     constructor(private store: Store) { }
     
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-        this.store.pipe(select(inventorySelectors.getInventorys)).subscribe(inventories => {
+        this.store.pipe(select(inventorySelectors.getInventories)).subscribe(inventories => {
             this.inventoryCount = inventories ? inventories.length : 0;
         });
 

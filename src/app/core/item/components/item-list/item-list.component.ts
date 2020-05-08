@@ -46,7 +46,7 @@ export class ItemListComponent extends BaseListComponent implements OnInit {
   }
 
   ngOnInit() {
-    Global.stripFromUrl(4);
+    //Global.stripFromUrl(4);
 
     this.rows$ = this.store.pipe(select(ItemSelectors.getItems)).pipe(
       map((rows: any[]) => {

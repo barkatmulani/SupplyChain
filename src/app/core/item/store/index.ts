@@ -30,7 +30,7 @@ export enum ItemActionTypes {
 export interface ItemListState {
     pageNo: number,
     recordsPerPage: number,
-    items: Item[],
+    items: any[],
     itemResult: { items: Item[], error: any }
     selectedItemId: number | null;
     navigationFlag: boolean;

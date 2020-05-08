@@ -45,10 +45,20 @@ export class ItemComponent extends BaseDetailComponent implements OnInit {
     
     const id = this.route.snapshot.params.id;
     
+    this.route.data.subscribe(x => console.log(x));
+
     if (id) {
       this.data$ = this.route.data.pipe(
-        map(data => (data.resolvedItem.item)),
-        tap(data => this.loadData(data)));
+        map(data => data.resolvedItem),
+        tap(data => {
+          if(data.item) {
+            this.loadData(data.item);
+          }
+          else {
+            super.handleError(data);
+            this.frmMain.disable();
+          }
+        }));
     }
     else {
       this.data$ = of({});
@@ -91,7 +101,10 @@ export class ItemComponent extends BaseDetailComponent implements OnInit {
   }
 
   onCancel() {
-    this.router.navigate([{ outlets: { primary: 'items', detail: null }}]);
+    if(this.navigationFlag)
+      this.router.navigate([this.lastNavigationPath]);
+    else
+      this.router.navigate([{ outlets: { primary: this.lastNavigationPath, detail: null } }]);
   }
 
   get isDirty(): boolean {

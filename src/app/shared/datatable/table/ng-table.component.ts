@@ -101,6 +101,7 @@ export class NgTableComponent implements OnInit, OnChanges {
     }
 
     ngOnInit(): void {
+        this.ngOnChanges();
     }
 
     ngOnChanges(): void {
@@ -402,7 +403,7 @@ export class NgTableComponent implements OnInit, OnChanges {
                 if (insertSubForms)
                     this.rows.splice((rowIndex * 2) + 1, 0, Object.assign({ subForm: true, mainRow: rowIndex, visible: false }));
 
-                row = {...row, rowNo: rowIndex};
+                row.rowNo = rowIndex;
 
                 /***** Check / Uncheck Checkboxes *****/
 

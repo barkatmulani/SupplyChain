@@ -82,6 +82,11 @@ export class BaseDetailComponent implements IBaseDetailComponent {
             return true
         }, () => false);
     }
+
+    handleError(data) {
+        if(data.error) this.toastr.error(data.error.message, 'Error');
+        else this.toastr.error('No record found.', 'Error');
+    }
 }
 
 

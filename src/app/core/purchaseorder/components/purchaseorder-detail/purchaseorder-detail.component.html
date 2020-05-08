@@ -1,0 +1,106 @@
+<header *ngIf="!isDisabled" class="main"></header>
+<form [formGroup]="frmMain" class="main" [disable]="isDisabled">
+    <div class="panel panel-primary scms" [ngClass]="{'disabled': mode === 'V'}">
+        <div class="panel-heading">Manage Purchase Order</div>
+
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="form-group">
+                        <label class="">Purchase Order #</label>&nbsp;
+                        <input  class="form-control"
+                                [value]="purchaseOrderText"
+                                type="text"
+                                disabled
+                        >
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-xs-12 col-sm-6">
+                    <div class="form-group">
+                        <label for="purchaseOrderDate">PO Date</label>
+                        <input class="form-control" formControlName="purchaseOrderDate" type="date" [disabled]="!frmMain.enabled">
+                    </div>
+                </div>
+
+                <div class="col-xs-12 col-sm-6">
+                    <div class="form-group">
+                        <label for="estDeliveryDate">Estimated Delivery Date</label>
+                        <input class="form-control" formControlName="estDeliveryDate" type="date" [disabled]="!frmMain.enabled">
+                    </div>
+                </div>
+
+                <div class="col-xs-12 col-sm-6">
+                    <div class="form-group">
+                        <label for="inventoryId">Inventory</label>
+                        <ng-select  formControlName="inventoryId"
+                                    class="control-label"
+                                    [items]="inventories$ | async"
+                                    [clearable]="false"
+                                    bindValue="inventoryId"
+                                    bindLabel="inventoryDescription"
+                                    placeholder="Select Inventory">
+                        </ng-select>
+                    </div>
+                </div>
+
+                <div class="col-xs-12 col-sm-6">
+                    <div class="form-group">
+                        <label for="vendorId">Vendor</label>
+                        <ng-select  formControlName="vendorId"
+                                    class="control-label"
+                                    [clearable]="false"
+                                    bindValue="vendorId"
+                                    bindLabel="vendorName"
+                                    [items]="vendors$ | async"
+                                    placeholder="Select Vendor">
+                        </ng-select>
+                    </div>
+                </div>
+
+                <div class="col-xs-12 col-sm-6">
+                    <div class="form-group">
+                        <label for="shipmentCost">Shipment Cost</label>
+                        <input class="form-control" formControlName="shipmentCost" type="number" [disabled]="!frmMain.enabled">
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="!purchaseOrderId" class="col-xs-12">
+                <div class="pull-right gap-bottom">
+                    <button type="submit" class="btn btn-primary" (click)="onAddClicked()" [disabled]="!frmMain.enabled">Add Item</button>
+                </div>
+            </div>
+            <div class="scrollable">
+                <div style="min-width: 500px">
+                    <datatable  #datatable
+                                [disabled]="isDisabled"
+                                [showFilterRow]="false"
+                                [allowEditing]="false"
+                                [allowAddition]="false"
+                                [allowReordering]="false"
+                                [showTotals]="false"
+                                [idColumn]="'itemId'"
+                                [page]="pageNo"
+                                (addClicked)="onAddClicked()"
+                                (cellValueChanged)="onCellValueChanged($event)"
+                                (dropdownChanged)="onDropdownChanged($event)"
+                                (tableChanged)="onChangeTable(config)"
+                                (linkClicked)="onLinkClicked($event)"
+                                [tableData]="pOItems"
+                                [columns]="columns">
+                    </datatable>
+                </div>
+            </div>
+            
+            <command-panel *ngIf="!purchaseOrderId" (save)="onSave($event)" (cancel)="onCancel($event)" [disabled]="frmMain.invalid || !frmMain.enabled || isDisabled || (!frmMain.dirty && !isTableDirty)"></command-panel>
+        </div>
+    </div>
+</form>
+
+<confirmation   #deleteconfirmation
+                (confirm)="onDeleteConfirm($event)"
+                [message]="'Are you sure you want to delete this record?'">
+</confirmation>

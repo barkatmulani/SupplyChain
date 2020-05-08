@@ -14,7 +14,7 @@ export class inventorySelectors {
         state => state.recordsPerPage
     );
 
-    static getInventorys = createSelector(
+    static getInventories = createSelector(
         inventorySelector,
         state => state.inventories
     );

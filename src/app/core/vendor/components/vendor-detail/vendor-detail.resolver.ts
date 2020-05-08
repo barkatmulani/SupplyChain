@@ -20,11 +20,11 @@ export class VendorResolver implements Resolve<ResolvedVendor> {
         }
 
         return this.VendorService.get(+id).pipe(
-            map(vendor => ({ vendor })),
             catchError(error => {
-              console.log(error);
-              return of({ vendor: null, error});
-            })
+                return of({ vendor: null, error })
+            }),
+            tap(data => console.log(data)),
+            map(data => data && data.error ? data : { vendor: data })
         );
     }
 }

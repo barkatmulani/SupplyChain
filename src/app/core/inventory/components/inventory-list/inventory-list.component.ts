@@ -47,7 +47,7 @@ export class InventoryListComponent extends BaseListComponent implements OnInit 
   ngOnInit() {
     Global.stripFromUrl(4);
 
-    this.rows$ = this.store.pipe(select(inventorySelectors.getInventorys)).pipe(
+    this.rows$ = this.store.pipe(select(inventorySelectors.getInventories)).pipe(
       map((rows: any[]) => {
           const inventories = rows ? rows.map(inventory => ({...inventory, id: inventory.inventoryId })) : [];
           return inventories;

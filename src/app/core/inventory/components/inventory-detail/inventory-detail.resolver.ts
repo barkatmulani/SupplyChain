@@ -1,7 +1,7 @@
 import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, ActivatedRoute } from "@angular/router"
 import { Injectable } from "@angular/core";
 import { InventoryService } from "../../../../services/common.services";
-import { catchError, map } from "rxjs/operators";
+import { catchError, map, tap } from "rxjs/operators";
 import { of } from "rxjs";
 import { ResolvedInventory } from "../../../../models/inventory.model";
 
@@ -21,11 +21,10 @@ export class InventoryResolver implements Resolve<ResolvedInventory> {
         }
 
         return this.inventoryService.get(+id).pipe(
-            map(inventory => ({ inventory })),
             catchError(error => {
-              console.log(error);
-              return of({ inventory: null, error});
-            })
+                return of({ inventory: null, error })
+            }),
+            map(data => data && data.error ? data : { inventory: data })
         );
     }
 }

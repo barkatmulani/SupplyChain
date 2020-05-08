@@ -66,7 +66,6 @@ export function RecordListReducer(state = recordInitialState, action: RecordList
             };
 
         case RecordActionTypes.ResetError:
-            debugger;
             return {
                 ...state,
                 error: null

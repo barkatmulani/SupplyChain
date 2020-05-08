@@ -2,23 +2,25 @@
     <div class="panel panel-primary scms">
         <div class="panel-heading">Manage Item</div>
         <div class="panel-body">
-            <div class="col-sm-12">
-                <div class="form-group"
-                    [ngClass]="{'has-error': frmMain.controls.itemDescription.invalid && frmMain.controls.itemDescription.dirty}">
-                    <label for="itemDesc">Item Description</label>
-                    <input class="form-control" formControlName="itemDescription">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group"
+                        [ngClass]="{'has-error': frmMain.controls.itemDescription.invalid && frmMain.controls.itemDescription.dirty}">
+                        <label for="itemDesc">Item Description</label>
+                        <input class="form-control" formControlName="itemDescription">
+                    </div>
                 </div>
-            </div>
-            <div class="col-sm-12 col-md-6">
-                <div class="form-group">
-                    <label for="cost">Item Cost</label>
-                    <input class="form-control" formControlName="cost">
+                <div class="col-sm-12 col-md-6">
+                    <div class="form-group">
+                        <label for="cost">Item Cost</label>
+                        <input class="form-control" formControlName="cost">
+                    </div>
                 </div>
-            </div>
-            <div class="col-sm-12 col-md-6">
-                <div class="form-group">
-                    <label for="price">Item Price</label>
-                    <input class="form-control" formControlName="price">
+                <div class="col-sm-12 col-md-6">
+                    <div class="form-group">
+                        <label for="price">Item Price</label>
+                        <input class="form-control" formControlName="price">
+                    </div>
                 </div>
             </div>
 

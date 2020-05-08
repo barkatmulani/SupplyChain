@@ -46,8 +46,16 @@ export class VendorComponent extends BaseDetailComponent implements OnInit {
     
     if (id) {
       this.data$ = this.route.data.pipe(
-        map(data => (data.resolvedVendor.vendor)),
-        tap(data => this.loadData(data)));
+        map(data => (data.resolvedVendor)),
+        tap(data => {
+          if(data.vendor) {
+            this.loadData(data.vendor);
+          }
+          else {
+            super.handleError(data);
+            this.frmMain.disable();
+          }
+        }));
     }
     else {
       this.data$ = of({});
