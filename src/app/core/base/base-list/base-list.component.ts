@@ -32,7 +32,6 @@ export class BaseListComponent implements IBaseListComponent {
     numPages = 1;
     maxSize = 5;
     hasData = false;
-    recordId: number;
     lastNavigationPath: string;
     
     constructor(public route: ActivatedRoute,
@@ -49,7 +48,7 @@ export class BaseListComponent implements IBaseListComponent {
         
         this.lastActionType$ = this.store.pipe(select(RecordSelectors.getLastActionType)).subscribe(
             (type:string) => {
-            if (type && type === RecordActionType.Delete) {
+            if (type && (type === RecordActionType.Delete || type === RecordActionType.Post)) {
                 this.store.dispatch(new recordActions.ResetLastActionType());
                 this.store.dispatch(new recordActions.SetRecordUpdatedFlag());
                 Global.showNotification(type, this.toastr);
@@ -65,7 +64,7 @@ export class BaseListComponent implements IBaseListComponent {
             .subscribe((navigationFlag: boolean) => this.navigationFlag = navigationFlag);
     }
 
-    destroy() {
+    ngOnDestroy() {
         if(this.selectedId$) this.selectedId$.unsubscribe();
         if(this.navigationFlag$) this.navigationFlag$.unsubscribe();
         if(this.lastActionType$) this.lastActionType$.unsubscribe();

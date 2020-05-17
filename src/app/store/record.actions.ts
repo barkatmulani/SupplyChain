@@ -13,6 +13,10 @@ export class DeleteRecordSuccess implements Action {
     readonly type = RecordActionTypes.DeleteRecord;
 }
 
+export class PostRecordSuccess implements Action {
+    readonly type = RecordActionTypes.PostRecord;
+}
+
 export class SetLastActionType implements Action {
     readonly type = RecordActionTypes.SetLastActionType;
 
@@ -51,6 +55,7 @@ export type RecordListActions = SetLastActionType
     | SaveRecordSuccess
     | AddRecordSuccess
     | DeleteRecordSuccess
+    | PostRecordSuccess
     | ResetLastActionType
     | SetRecordUpdatedFlag
     | ResetRecordUpdatedFlag

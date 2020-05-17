@@ -7,13 +7,12 @@ import { ItemService } from "../../services/common.services";
 import { ItemResolver } from "./components/item-detail/item-detail.resolver";
 import { StoreModule } from "@ngrx/store";
 import { ItemReducer } from "./store/item.reducer";
-import { ItemListResolver } from "./components/item-list/item-list.resolver";
 import { DirtyRecordGuard } from "../../guards/dirty-record-guard";
 import { ItemEffects } from './store/item.effects';
 import { EffectsModule } from "@ngrx/effects";
 
 const routes: Routes = [
-    { path: 'items', component: ItemListComponent, resolve: { resolvedItemList: ItemListResolver } },
+    { path: 'items', component: ItemListComponent },
     { path: 'item/:id', component: ItemComponent, resolve: { resolvedItem: ItemResolver }, canDeactivate: [DirtyRecordGuard] },
     { path: 'item', pathMatch: "full", component: ItemComponent, canDeactivate: [DirtyRecordGuard] },
     { path: 'showItem/:id', component: ItemComponent, resolve: { resolvedItem: ItemResolver }, outlet: 'detail', canDeactivate: [DirtyRecordGuard] },
@@ -35,8 +34,7 @@ const routes: Routes = [
     ],
     providers: [
         ItemService,
-        ItemResolver,
-        ItemListResolver
+        ItemResolver
     ]
 })
 

@@ -27,7 +27,7 @@ export class PurchaseOrderEffects {
       )
     )
   );
-            
+
   @Effect()
   loadPurchaseOrderList$: Observable<Action> = this.actions$.pipe(
     //catchError(err => of(new purchaseOrderActions.LoadPurchaseOrderListFail(err))),
@@ -74,6 +74,19 @@ export class PurchaseOrderEffects {
       this.purchaseOrderService.delete(purchaseOrderId).pipe(
         switchMap((purchaseOrder:any) => [new purchaseOrderActions.DeletePurchaseOrderSuccess(purchaseOrder),
                                  new recordActions.DeleteRecordSuccess()]),
+        catchError(err => of(new recordActions.SetError(err)))
+      )
+    )
+  );
+  
+  @Effect()
+  postPurchaseOrder$: Observable<Action> = this.actions$.pipe(
+    ofType(PurchaseOrderActionTypes.PostPurchaseOrder),
+    map((action: purchaseOrderActions.PostPurchaseOrder) => action.payload),
+    concatMap((purchaseOrderId: number) =>
+      this.purchaseOrderService.put(purchaseOrderId, { statusId: 2 }).pipe(
+        switchMap((purchaseOrder:any) => [new purchaseOrderActions.PostPurchaseOrderSuccess(purchaseOrder),
+                                 new recordActions.PostRecordSuccess()]),
         catchError(err => of(new recordActions.SetError(err)))
       )
     )

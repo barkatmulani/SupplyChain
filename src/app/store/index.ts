@@ -4,6 +4,7 @@ export enum RecordActionTypes {
     SaveRecord = '[Base] Save Record',
     AddRecord = '[Base] Add Record',
     DeleteRecord = '[Base] Delete Record',
+    PostRecord = '[Base] Post Record',
     SetLastActionType = '[Base] Set Last Action Type',
     ResetLastActionType = '[Base] Reset Last Action Type',
     SetRecordUpdatedFlag = '[Base] Set Record Updated Flag',

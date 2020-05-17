@@ -4,11 +4,11 @@ import { Global } from '../../../../../global';
 import { ToastrService } from 'ngx-toastr';
 import { Store, select } from '@ngrx/store';
 import * as inventoryActions from '../../store/inventory.actions';
-import { ConfirmationComponent } from '../../../../shared/confirmation/confirmation.component';
 import { inventorySelectors } from '../../store/inventory.selectors'
 import { BaseListComponent } from '../../../base/base-list/base-list.component';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
+import { ConfirmationService } from '../../../../services/confirmation.service';
 
 
 @Component({
@@ -35,12 +35,11 @@ export class InventoryListComponent extends BaseListComponent implements OnInit 
     filtering: {filterString: ''}
   };
 
-  @ViewChild('deleteconfirmation') deleteconfirmation: ConfirmationComponent;
-
   constructor(router: Router,
               route: ActivatedRoute,
               toastr: ToastrService,
-              store: Store) {
+              store: Store,
+              private confirmationService: ConfirmationService) {
     super(route, router, toastr, store, inventorySelectors);
   }
 
@@ -53,10 +52,6 @@ export class InventoryListComponent extends BaseListComponent implements OnInit 
           return inventories;
       })
     );
-  }
-
-  ngOnDestroy() {
-    super.destroy();
   }
 
   public onCellClick(data: any): any {
@@ -80,8 +75,10 @@ export class InventoryListComponent extends BaseListComponent implements OnInit 
         break;
 
       case 'D':
-        this.recordId = data.rowId;
-        this.deleteconfirmation.open();
+        let modal1 = this.confirmationService.openDeleteModal();
+        modal1.result.then(null, result => {
+          if(result) this.onDeleteConfirm(data.rowId);
+        });
         break;
     }
   }
@@ -102,7 +99,7 @@ export class InventoryListComponent extends BaseListComponent implements OnInit 
   }
 
   public onDeleteConfirm(id: number) {
-    this.store.dispatch(new inventoryActions.DeleteInventory(this.recordId));
+    this.store.dispatch(new inventoryActions.DeleteInventory(id));
   }
 
   public onChangeTable(config: any) {

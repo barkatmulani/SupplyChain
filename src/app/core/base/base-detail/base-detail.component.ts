@@ -43,7 +43,7 @@ export class BaseDetailComponent implements IBaseDetailComponent {
         
         this.lastActionType$ = this.store.pipe(select(RecordSelectors.getLastActionType)).subscribe(
             (type: string) => {
-                if (type && type !== RecordActionType.Delete) {
+                if (type && type !== RecordActionType.Delete && type !== RecordActionType.Post) {
                     this.store.dispatch(new recordActions.ResetLastActionType());
                     this.store.dispatch(new recordActions.SetRecordUpdatedFlag());
                     Global.showNotification(type, this.toastr);

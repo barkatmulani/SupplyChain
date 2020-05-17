@@ -109,6 +109,22 @@ export function PurchaseOrderReducer (state = purchaseOrderListInitialState, act
                 error: action.payload
             };
         
+            
+        case PurchaseOrderActionTypes.PostPurchaseOrderSuccess:
+            return {
+                ...state,
+                purchaseOrders: state.purchaseOrders.filter(purchaseOrder => purchaseOrder.purchaseOrderId !== action.payload.purchaseOrderId),
+                updatedPurchaseOrder: action.payload,
+                error: null
+            }
+
+        case PurchaseOrderActionTypes.PostPurchaseOrderFail:
+            return {
+                ...state,
+                updatedPurchaseOrder: null,
+                error: action.payload
+            };
+        
         default:
             return state;
     }

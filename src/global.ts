@@ -83,7 +83,12 @@ export class Global {
         return d.getDate() + '-' + Global.getMonthName(d.getMonth()) + '-' + d.getFullYear();
     }
 
+    public static getControlDate(d: string): string {
+        return d ? d.substr(0, 10) : '';
+    }
+
     public static getCurrentDate(): string {
+        return (new Date()).toISOString().substr(0,10);
         let d = new Date(Date.now());
         return d.getFullYear() + '-' + this.appendZeros(d.getMonth(), 2) + '-' + this.appendZeros(d.getDate(), 2);
     }
@@ -116,6 +121,7 @@ export class Global {
                 case RecordActionType.Add: action = 'added'; break;
                 case RecordActionType.Update: action = 'updated'; break;
                 case RecordActionType.Delete: action = 'deleted'; break;
+                case RecordActionType.Post: action = 'posted'; break;
             }
             
             toastr.success(`Record ${action} successfully`, 'Success!');
@@ -135,6 +141,7 @@ export enum RecordActionType {
     Add = 'A',
     Update = 'U',
     Delete = 'D',
+    Post = 'P',
     Cancel = 'C'
 };
 

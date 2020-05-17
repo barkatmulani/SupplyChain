@@ -15,7 +15,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
     ]
 })
 
-export class DropdownComponent implements ControlValueAccessor {
+export class DropdownComponent implements OnChanges, ControlValueAccessor {
     selectedValue: any;
 
     @Input() title: string;
@@ -23,7 +23,12 @@ export class DropdownComponent implements ControlValueAccessor {
     @Input() disabled: boolean = false;
     @Input() showLabel: boolean = false;
     @Input() items: TextValuePair[] = [new TextValuePair('', '', '')];
+    @Input() hideIds: number[];
     @Output() onSelected: EventEmitter<string> = new EventEmitter();
+
+    ngOnChanges() {
+        //console.log('Hide Ids', this.items, this.hideIds)
+    }
 
     onChanged(value: any): void {
         console.log('Value changed to ', value)
@@ -73,5 +78,16 @@ export class DropdownComponent implements ControlValueAccessor {
         return this.items && this.items.length
                 ? this.items.find(x => x.value == obj)
                 : null;
+    }
+
+    getItems() {
+        let val = this.items.filter(r => {
+            let v = parseInt(r.value);
+            let i = this.hideIds.indexOf(v)
+            console.log(i)
+            return i < 0
+        });
+        console.log(val, this.hideIds);
+        return val;
     }
 }

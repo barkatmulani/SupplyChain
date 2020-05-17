@@ -1,18 +1,17 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
 import { TableComponent } from '../../../../shared/datatable/table.component';
-import { Global } from '../../../../../global';
 import { ToastrService } from 'ngx-toastr';
-import { PurchaseOrderService } from '../../../../services/common.services';
-import { ConfirmationComponent } from '../../../../shared/confirmation/confirmation.component';
-import { Observable, of } from 'rxjs';
-import { map, tap, take } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Store, select } from '@ngrx/store';
 import { PurchaseOrderSelectors } from '../../store/purchaseOrder.selectors';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PurchaseOrderComponent } from '../purchaseorder-detail/purchaseorder-detail.component';
-import { LoadPurchaseOrder } from '../../store/purchaseorder.actions';
+import { LoadPurchaseOrder, DeletePurchaseOrder, PostPurchaseOrder } from '../../store/purchaseorder.actions';
+import { ConfirmationService } from '../../../../services/confirmation.service';
+import { BaseListComponent } from '../../../base/base-list/base-list.component';
+import * as purchaseOrderActions from '../../store/purchaseorder.actions';
 
 @Component({
   selector: 'purchaseorders',
@@ -20,7 +19,7 @@ import { LoadPurchaseOrder } from '../../store/purchaseorder.actions';
   templateUrl: 'purchaseorder-list.component.html'
 })
 
-export class PurchaseOrderListComponent implements OnInit {
+export class PurchaseOrderListComponent extends BaseListComponent implements OnInit {
   rows$: Observable<Array<any>>; // = TableData;
   pageNo: number = 1;
 
@@ -36,17 +35,16 @@ export class PurchaseOrderListComponent implements OnInit {
   purchaseOrderId: number;
 
   @ViewChild('datatable') datatable: TableComponent;
-  @ViewChild('deleteconfirmation') deleteconfirmation: ConfirmationComponent;
-  @ViewChild('postconfirmation') postconfirmation: ConfirmationComponent;
 
   columns: Array<any>;
 
-  constructor(private router: Router,
-              private toastr: ToastrService,
-              private route: ActivatedRoute,
-              private store: Store,
+  constructor(public route: ActivatedRoute,
+              public router: Router,
+              public toastr: ToastrService,
+              public store: Store,
               private modalService: NgbModal,
-              private purchaseOrderService: PurchaseOrderService) {
+              private confirmationService: ConfirmationService) {
+    super(route, router, toastr, store, PurchaseOrderSelectors);
   }
 
   ngOnInit(): void {
@@ -73,13 +71,8 @@ export class PurchaseOrderListComponent implements OnInit {
 
     this.rows$ = this.store.pipe(select(PurchaseOrderSelectors.getPurchaseOrders)).pipe(
       map(rows => rows ? rows.map(row => ({...row, id: row.purchaseOrderId})) : []),
-      tap(rows => {
-        this.rowCount = rows.length
-        this.rows = rows;
-      })
     );
   }
-
 
   public onCellClick(data: any): any {
     console.log(data);
@@ -93,50 +86,35 @@ export class PurchaseOrderListComponent implements OnInit {
         this.router.navigate(['purchaseorder', this.purchaseOrderId]);
         break;
       case 'D':
-        this.deleteconfirmation.open();
+        let modal1 = this.confirmationService.openDeleteModal();
+        modal1.result.then(null, result => {
+          if(result) this.onDeleteConfirm(data.rowId);
+        });
         break;
       case 'P':
-        this.postconfirmation.open();
+        let modal2 = this.confirmationService.openPostModal();
+        modal2.result.then(null, result => {
+          if(result) this.onPostConfirm(data.rowId);
+        });
         break;
       case 'V':
         this.store.dispatch(new LoadPurchaseOrder(data.rowId));
-        
         let comp = this.modalService.open(PurchaseOrderComponent);
-        comp.componentInstance.purchaseOrderId = data.rowId;
         comp.componentInstance.isDisabled = true;
-        
         break;
     }
   }
 
   public onAddClicked() {
-    this.router.navigate(['purchaseorder']);
+    this.router.navigate([this.lastNavigationPath]);
   }
 
-  public onDeleteConfirm(id: string) {
-    this.purchaseOrderService.delete(this.purchaseOrderId)
-      .subscribe((data: any) => {
-        this.toastr.success('Record deleted successfully', 'Success!');
-        // this.loadData();
-      },
-      error => {
-        this.toastr.error(error.message, 'Error!');
-      },
-      () => {
-      });
+  public onDeleteConfirm(id: number) {
+    this.store.dispatch(new DeletePurchaseOrder(id));
   }
 
-  public onPostConfirm(id: string) {
-    this.purchaseOrderService.put(this.purchaseOrderId, { statusId: 2 })
-      .subscribe((data: any) => {
-        this.toastr.success('Record posted successfully', 'Success!');
-        // this.loadData();
-      },
-      error => {
-        this.toastr.error(error.message, 'Error!');
-      },
-      () => {
-      });
+  public onPostConfirm(id: number) {
+    this.store.dispatch(new PostPurchaseOrder(id));
   }
 
   public onChangeTable(config: any) {
@@ -144,7 +122,8 @@ export class PurchaseOrderListComponent implements OnInit {
   }
 
   public onPageChanged(data: any) {
-    this.pageNo = data.pageNo;
+    //this.pageNo = data.pageNo;
+    this.store.dispatch(new purchaseOrderActions.SetPageNo(data.pageNo));
   }
 
   public onClose() {

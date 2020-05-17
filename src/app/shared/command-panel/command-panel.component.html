@@ -1,11 +1,13 @@
 <div class="text-right my-3">
-    <button class="pull-right btn btn-primary mx-2"
+    <button type="button"
+            class="pull-right btn btn-primary mx-2"
             [ngClass]="{'disabled': disabled}"
             [disabled]="disabled"
             (click)="onSave()">
         Save
     </button>
-    <button class="pull-right btn btn-light btn-outline-dark"
+    <button type="button"
+            class="pull-right btn btn-light btn-outline-dark"
             (click)="onCancel()">
         Cancel
     </button>

@@ -6,12 +6,6 @@ export interface Item {
     price: number;
 };
 
-export interface ResolvedItemList {
-    count: number
-    // items: Item[],
-    // error?: any;
-}
-
 export interface ResolvedItem {
     item: Item;
     error?: any;

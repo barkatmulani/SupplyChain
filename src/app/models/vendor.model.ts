@@ -6,10 +6,6 @@ export interface Vendor {
     phoneNo: string;
 };
 
-export interface ResolvedVendorList {
-    count: number
-}
-
 export interface ResolvedVendor {
     vendor: Vendor;
     error?: any;

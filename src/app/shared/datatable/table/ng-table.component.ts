@@ -511,10 +511,10 @@ export class NgTableComponent implements OnInit, OnChanges {
         this.blur.emit({ rowNo, colNo, columnName, value: event.value, prevRow });
     }
 
-    onChangeDropdown(id: string, rowNo: number, columnName: string, colNo: number) {
+    onChangeDropdown(id: string, row, columnName: string, colNo: number) {
         //console.log('onChangeDropdown: ' + rowNo + ',' + columnName + ' -> evaluateFormulaFields');
-        this.dropdownChanged.emit({ id: id, rowNo: rowNo, columnName: columnName, colNo: colNo });
-        this.evaluateFormulaFields(rowNo);
+        this.dropdownChanged.emit({ id, prevId: row[columnName], rowNo: row.rowNo, columnName, colNo });
+        this.evaluateFormulaFields(row.rowNo);
         this.validateCells(colNo);
     }
 
@@ -836,5 +836,11 @@ export class NgTableComponent implements OnInit, OnChanges {
     public setRows(rows: any[]) {
         this.rows = rows;
         this.dataRows = this.rows.filter((x: any) => !x.detail && !x.subForm);
+    }
+
+    hideIds(row: any, column: any) {
+        const r = this.rows.filter(r => r != row && !r.subForm).map(r => r[column.name]);
+        //console.log(row[column.name], r)
+        return r;
     }
 }

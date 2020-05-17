@@ -22,6 +22,9 @@ export enum PurchaseOrderActionTypes {
     DeletePurchaseOrder = '[PurchaseOrder] Delete PurchaseOrder',
     DeletePurchaseOrderSuccess = '[PurchaseOrder] Delete PurchaseOrder Success',
     DeletePurchaseOrderFail = '[PurchaseOrder] Delete PurchaseOrder Fail',
+    PostPurchaseOrder = '[PurchaseOrder] Post PurchaseOrder',
+    PostPurchaseOrderSuccess = '[PurchaseOrder] Post PurchaseOrder Success',
+    PostPurchaseOrderFail = '[PurchaseOrder] Post PurchaseOrder Fail',
     SetLastActionType = '[PurchaseOrder] Set Last Action Type',
     ResetLastActionType = '[PurchaseOrder] Reset Last Action Type',
     ResetUpdatedPurchaseOrder = '[PurchaseOrder] Reset Updated PurchaseOrder'
@@ -54,5 +57,7 @@ export const purchaseOrderDetailInitialState : PurchaseOrder = {
     purchaseOrderDate: null,
     estDeliveryDate: null,
     purchaseOrderTotal: 0,
-    shipmentCost: 0
+    shipmentCost: 0,
+    inventoryId: null,
+    vendorId: null
 };

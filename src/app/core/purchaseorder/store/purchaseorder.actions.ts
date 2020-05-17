@@ -118,6 +118,24 @@ export class DeletePurchaseOrderFail implements Action {
     constructor(public payload: any) { }
 };
 
+export class PostPurchaseOrder implements Action {
+    readonly type = PurchaseOrderActionTypes.PostPurchaseOrder
+
+    constructor(public payload: number) { }
+};
+
+export class PostPurchaseOrderSuccess implements Action {
+    readonly type = PurchaseOrderActionTypes.PostPurchaseOrderSuccess
+
+    constructor(public payload: PurchaseOrder) { }
+};
+
+export class PostPurchaseOrderFail implements Action {
+    readonly type = PurchaseOrderActionTypes.PostPurchaseOrderFail
+
+    constructor(public payload: any) { }
+};
+
 
 export class SetLastActionType implements Action {
     readonly type = PurchaseOrderActionTypes.SetLastActionType;
@@ -149,5 +167,8 @@ export type PurchaseOrderListActions = SetPageNo
     | DeletePurchaseOrder
     | DeletePurchaseOrderSuccess
     | DeletePurchaseOrderFail
+    | PostPurchaseOrder
+    | PostPurchaseOrderSuccess
+    | PostPurchaseOrderFail
     | SetLastActionType
     | ResetLastActionType;

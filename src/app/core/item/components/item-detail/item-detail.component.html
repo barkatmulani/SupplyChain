@@ -24,7 +24,7 @@
                 </div>
             </div>
 
-            <command-panel (save)="onSave($event)" (cancel)="onCancel($event)" [disabled]="frmMain.invalid || !frmMain.dirty"></command-panel>
+            <command-panel (save)="onSave($event)" (cancel)="onCancel()" [disabled]="frmMain.invalid || !frmMain.dirty"></command-panel>
         </div>
     </div>
 </form>

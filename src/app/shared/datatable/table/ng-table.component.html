@@ -120,8 +120,9 @@
                               [showLabel]="false"
                               [(ngModel)]="row[column.name]"
                               [items]="column.itemsProp ? row[column.itemsProp] : column.items"
+                              [hideIds]="hideIds(row, column)"
                               [disabled]="column.disabled || disabled"
-                              (onSelected)="onChangeDropdown($event, row.rowNo, column.name, colIndex)">
+                              (onSelected)="onChangeDropdown($event, row, column.name, colIndex)">
                     </dropdown>
                 </div>
                 <imagelink *ngIf="column.key && !row.detail"

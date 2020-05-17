@@ -7,13 +7,12 @@ import { InventoryService } from "../../services/common.services";
 import { InventoryResolver } from "./components/inventory-detail/inventory-detail.resolver";
 import { StoreModule } from "@ngrx/store";
 import { InventoryReducer } from "./store/inventory.reducer";
-import { InventoryListResolver } from "./components/inventory-list/inventory-list.resolver";
 import { DirtyRecordGuard } from "../../guards/dirty-record-guard";
 import { InventoryEffects } from './store/inventory.effects';
 import { EffectsModule } from "@ngrx/effects";
 
 const routes: Routes = [
-    { path: 'inventories', component: InventoryListComponent, resolve: { resolvedInventoryList: InventoryListResolver } },
+    { path: 'inventories', component: InventoryListComponent },
     { path: 'inventory/:id', component: InventoryComponent, resolve: { resolvedInventory: InventoryResolver }, canDeactivate: [DirtyRecordGuard] },
     { path: 'inventory', pathMatch: "full", component: InventoryComponent, canDeactivate: [DirtyRecordGuard] },
     { path: 'showInventory/:id', component: InventoryComponent, resolve: { resolvedInventory: InventoryResolver }, outlet: 'detail', canDeactivate: [DirtyRecordGuard] },
@@ -35,8 +34,7 @@ const routes: Routes = [
     ],
     providers: [
         InventoryService,
-        InventoryResolver,
-        InventoryListResolver
+        InventoryResolver
     ]
 })
 

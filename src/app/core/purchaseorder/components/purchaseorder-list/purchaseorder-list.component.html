@@ -2,12 +2,15 @@
 <div class="panel panel-primary scms">
     <div class="panel-heading">{{mode === 'L' ? 'Manage' : 'Post'}} Purchase Order</div>
     <div class="panel-body">
-        <div *ngIf="mode === 'L'" class="col-sm-12">
-            <div class="pull-right gap-bottom">
-                <button type="submit" class="btn btn-primary" (click)="onAddClicked()">Add New</button>
+        <div class="row my-3">
+            <div *ngIf="mode === 'L'" class="col-sm-12 text-right">
+                <button type="submit" class="btn btn-success" (click)="onAddClicked()">
+                    <i class="fas fa-plus-circle"></i>
+                    Add New
+                </button>
             </div>
         </div>
-
+        
         <div class="scrollable">
             <datatable  #datatable
                         [showFilterRow]="false"
@@ -24,22 +27,3 @@
         </div>
     </div>
 </div>
-
-<confirmation   #deleteconfirmation
-                [message]="'Are you sure you want to delete this record?'"
-                (confirm)="onDeleteConfirm($event)">
-</confirmation>
-
-<confirmation   #postconfirmation
-                [message]="'Are you sure you want to post this record?'"
-                (confirm)="onPostConfirm($event)">
-</confirmation>
-<!-- 
-<purchaseorder  [purchaseOrderId]="purchaseOrderId"
-[mode]="'V'"
-(click)="onClose()"
->
-</purchaseorder> -->
-
-
-<!-- <purchaseorder [data]="row"></purchaseorder> -->

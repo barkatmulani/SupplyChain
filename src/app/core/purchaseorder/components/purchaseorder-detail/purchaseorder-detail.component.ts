@@ -1,13 +1,12 @@
-import { Component, ViewChild, OnInit, Input, OnChanges, EventEmitter, Output, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, Output, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { Global, Status } from '../../../../../global';
+import { Status, Global } from '../../../../../global';
 import { TableComponent } from '../../../../shared/datatable/table.component';
-import { ConfirmationComponent } from '../../../../shared/confirmation/confirmation.component';
 import { Store, select } from '@ngrx/store';
 import { inventorySelectors } from '../../../inventory/store/inventory.selectors';
-import { Observable, combineLatest } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { ItemSelectors } from '../../../item/store/item.selectors';
 import { Vendor } from '../../../../models/Vendor.model';
 import { Inventory } from '../../../../models/inventory.model';
@@ -18,6 +17,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PurchaseOrderSelectors } from '../../store/purchaseOrder.selectors';
 import { TextValuePair } from '../../../../models';
 import { SavePurchaseOrder, AddPurchaseOrder } from '../../store/purchaseorder.actions';
+import { ConfirmationService } from '../../../../services/confirmation.service';
 
 
 @Component({
@@ -29,21 +29,20 @@ import { SavePurchaseOrder, AddPurchaseOrder } from '../../store/purchaseorder.a
 })
 
 export class PurchaseOrderComponent extends BaseDetailComponent implements OnInit, OnDestroy {
-  @Input() purchaseOrderId: number;
   @Input() isDisabled: boolean = false;
 
   @Output() close: EventEmitter<any> = new EventEmitter();
 
-  @ViewChild('datatable') datatable: TableComponent;
-  @ViewChild('deleteconfirmation') deleteconfirmation: ConfirmationComponent;
+  //@ViewChild('datatable') datatable: TableComponent;
 
-  data$: Observable<any>;
-  items$: Observable<any[]>;
+  data$: Subscription;
+  items$: Subscription;
   inventories$: Observable<Inventory[]>;
   vendors$: Observable<Vendor[]>;
 
   frmMain: FormGroup;
 
+  purchaseOrderId: number;
   index: number;
   isTableDirty: boolean = false;
   mode: string;
@@ -57,25 +56,26 @@ export class PurchaseOrderComponent extends BaseDetailComponent implements OnIni
 
   constructor(public toastr: ToastrService,
               public router: Router,
-              private route: ActivatedRoute,
               public store: Store,
               public modalService: NgbModal,
+              private route: ActivatedRoute,
               private fb: FormBuilder,
-              private cd: ChangeDetectorRef)
+              private cd: ChangeDetectorRef,
+              private confirmationService: ConfirmationService)
     {
-      super(router, toastr, store, modalService, PurchaseOrderSelectors)
+      super(router, toastr, store, modalService, PurchaseOrderSelectors);
     }
 
   ngOnInit() {
     this.frmMain = this.fb.group({
-      purchaseOrderId: 0,
+      purchaseOrderId: [{ value: 0, disabled: true }],
       active: true,
-      purchaseOrderDate: ['', Validators.required],
+      purchaseOrderDate: [{ value: '', disabled: this.isDisabled }, Validators.required],
       purchaseOrderTotal: 0,
-      inventoryId: [0, Validators.required],
-      vendorId: [0, Validators.required],
-      estDeliveryDate: '',
-      shipmentCost: 0
+      inventoryId: [{ value: 0, disabled: this.isDisabled }, Validators.required],
+      vendorId: [{ value: 0, disabled: this.isDisabled }, Validators.required],
+      estDeliveryDate: [{ value: '', disabled: this.isDisabled }],
+      shipmentCost:  [{ value: 0, disabled: this.isDisabled}]
     });
 
     // this.route.data.subscribe(
@@ -100,19 +100,8 @@ export class PurchaseOrderComponent extends BaseDetailComponent implements OnIni
       { title: 'Total', name: 'totalCost', width: "150px", format: 'currency', calcFormula: "[3] * [4]" }, // 5
     ];
 
-    this.data$ = this.store.pipe(select(PurchaseOrderSelectors.getPurchaseOrder));
-    this.items$ = this.store.pipe(select(ItemSelectors.getItems));
-
-    combineLatest([this.items$, this.data$]).subscribe(
-      ([items, data]) => {
-        // console.log(items ? items.length : 0, data);
-        // this.cd.markForCheck();
-        // this.cd.reattach();
-        this.items = items
-                    ? items.map(x => ({...x, ...(new TextValuePair(x.itemDescription, x.itemId.toString()))}))
-                    : [];
-        this.columns.find(x => x.name === 'itemId').items = this.items;
-
+    this.data$ = this.store.pipe(select(PurchaseOrderSelectors.getPurchaseOrder))
+      .subscribe(data => {
         if(data) {
           this.loadData(data);
           if(!this.isDisabled) this.frmMain.enable();
@@ -120,8 +109,19 @@ export class PurchaseOrderComponent extends BaseDetailComponent implements OnIni
         else {
           this.frmMain.disable();
         }
-      }
-    );
+      });
+
+    this.items$ = this.store.pipe(select(ItemSelectors.getItems))
+      .subscribe(items => {
+        this.items = items
+                    ? items.map(x => ({...x, ...(new TextValuePair(x.itemDescription, x.itemId.toString()))}))
+                    : [];
+        this.columns.find(x => x.name === 'itemId').items = this.items;
+    });
+    
+        // console.log(items ? items.length : 0, data);
+        // this.cd.markForCheck();
+        // this.cd.reattach();
     
     // this.data$.pipe(
     //   switchMap((data) => this.items$,
@@ -141,10 +141,6 @@ export class PurchaseOrderComponent extends BaseDetailComponent implements OnIni
 
     //     })
 
-    let id = this.route.snapshot.params.id;
-
-    this.purchaseOrderText = this.purchaseOrderId ? this.purchaseOrderId :
-                            (id && id > 0 ? id : "New Record");
   }
 
   loadData(data: any) {
@@ -162,19 +158,24 @@ export class PurchaseOrderComponent extends BaseDetailComponent implements OnIni
         purchaseOrderItem: data.purchaseOrderItem
     });
 
+    const id = this.route.snapshot.params.id;
+
+    if(id) {
+      this.purchaseOrderText = id && id > 0 ? id : "New Record";
+      this.purchaseOrderId = id;
+      this.isDisabled = false;
+    }
+    else {
+      this.purchaseOrderText = data.purchaseOrderId;
+      this.purchaseOrderId = data.purchaseOrderId;
+      this.isDisabled = true;
+    }
+    
     this.pOItems = data.purchaseOrderItem
                   ? data.purchaseOrderItem.map(x => ({...x}))
                   : [];
 
     //this.datatable.renderRows();
-  }
-
-  ngAfterViewInit() {
-    console.log('AfterViewInit')
-  }
-
-  ngOnChanges() {
-    // this.isDisabled = (this.mode === 'V');
   }
 
   ngOnDestroy() {
@@ -195,8 +196,6 @@ export class PurchaseOrderComponent extends BaseDetailComponent implements OnIni
       return {totalCost: prev.totalCost + curr.totalCost};
     }).totalCost : 0;
 
-    console.log(purchaseOrderTotal);
-
     let purchaseOrder = {
       purchaseOrderId: purchaseOrderId,
       active: this.frmMain.get('active').value,
@@ -214,15 +213,6 @@ export class PurchaseOrderComponent extends BaseDetailComponent implements OnIni
       this.store.dispatch(new AddPurchaseOrder(purchaseOrder));
     else
       this.store.dispatch(new SavePurchaseOrder(purchaseOrder));
-
-    // let methodCall: any;
-
-    // if(purchaseOrderId === 0) {
-    //     methodCall = this.purchaseOrderService.post(purchaseOrder);
-    // }
-    // else {
-    //     methodCall = this.purchaseOrderService.put(purchaseOrderId, purchaseOrder);
-    // }
   }
 
   onCancel() {
@@ -236,7 +226,7 @@ export class PurchaseOrderComponent extends BaseDetailComponent implements OnIni
   onAddClicked() {
     this.pOItems = [...this.pOItems,
       { purchaseOrderItemId: 0,
-        purchaseOrderId: 0,
+        purchaseOrderId: this.purchaseOrderId,
         itemId: -1,
         cost: 0,
         quantity: 1,
@@ -250,8 +240,10 @@ export class PurchaseOrderComponent extends BaseDetailComponent implements OnIni
   onLinkClicked(data: any) {
     switch(data.name) {
       case 'D':
-        this.index = data.rowIndex;
-        this.deleteconfirmation.open();
+        let modal1 = this.confirmationService.openDeleteModal();
+        modal1.result.then(null, result => {
+          if(result) this.onDeleteConfirm(data.rowIndex);
+        });
         break;
     }
   }
@@ -263,7 +255,7 @@ export class PurchaseOrderComponent extends BaseDetailComponent implements OnIni
   onDropdownChanged(data: any) {
     let row = this.pOItems[data.rowNo];
     if(data.columnName === 'itemId') {
-        this.fillItemDetails(data.id, row);
+        this.fillItemDetails(parseInt(data.id), row);
     }
   }
 
@@ -277,11 +269,11 @@ export class PurchaseOrderComponent extends BaseDetailComponent implements OnIni
     else {
       row.cost = 0;
     }
-    this.datatable.renderRows();
+    //this.datatable.renderRows();
   }
 
-  onDeleteConfirm() {
-    this.pOItems = Global.removeArrayItem(this.pOItems, this.index);
+  onDeleteConfirm(index) {
+    this.pOItems = Global.removeArrayItem(this.pOItems, index);
     this.toastr.success('Record deleted successfully', 'Success!');
     this.isTableDirty = true;
   }

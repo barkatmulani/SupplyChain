@@ -9,6 +9,7 @@ import { VendorSelectors } from '../../store/vendor.selectors'
 import { BaseListComponent } from '../../../base/base-list/base-list.component';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
+import { ConfirmationService } from '../../../../services/confirmation.service';
 
 
 @Component({
@@ -36,12 +37,11 @@ export class VendorListComponent extends BaseListComponent implements OnInit {
     filtering: {filterString: ''}
   };
 
-  @ViewChild('deleteconfirmation') deleteconfirmation: ConfirmationComponent;
-
   constructor(router: Router,
               route: ActivatedRoute,
               toastr: ToastrService,
-              store: Store) {
+              store: Store,
+              private confirmationService: ConfirmationService) {
     super(route, router, toastr, store, VendorSelectors);
   }
 
@@ -55,11 +55,7 @@ export class VendorListComponent extends BaseListComponent implements OnInit {
       })
     );
   }
-
-  ngOnDestroy() {
-    super.destroy();
-  }
-
+  
   public onCellClick(data: any): any {
     if(!data.selectedId) {
       this.store.dispatch(new vendorActions.UnselectVendor());
@@ -81,8 +77,10 @@ export class VendorListComponent extends BaseListComponent implements OnInit {
         break;
 
       case 'D':
-        this.recordId = data.rowId;
-        this.deleteconfirmation.open();
+        let modal1 = this.confirmationService.openDeleteModal();
+        modal1.result.then(null, result => {
+          if(result) this.onDeleteConfirm(data.rowId);
+        });
         break;
     }
   }
@@ -103,7 +101,7 @@ export class VendorListComponent extends BaseListComponent implements OnInit {
   }
 
   public onDeleteConfirm(id: number) {
-    this.store.dispatch(new vendorActions.DeleteVendor(this.recordId));
+    this.store.dispatch(new vendorActions.DeleteVendor(id));
   }
 
   public onChangeTable(config: any) {

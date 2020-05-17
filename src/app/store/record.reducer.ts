@@ -1,26 +1,34 @@
 import { RecordActionTypes, recordInitialState, RecordState } from '.';
 import { RecordListActions } from './record.actions';
+import { RecordActionType } from '../../global';
 
 export function RecordListReducer(state = recordInitialState, action: RecordListActions) {
     switch (action.type) {
         case RecordActionTypes.SaveRecord:
             return {
                 ...state,
-                lastActionType: 'U',
+                lastActionType: RecordActionType.Update,
                 error: null
         }
 
         case RecordActionTypes.AddRecord:
             return {
                 ...state,
-                lastActionType: 'A',
+                lastActionType: RecordActionType.Add,
                 error: null
         }
 
         case RecordActionTypes.DeleteRecord:
             return {
                 ...state,
-                lastActionType: 'D',
+                lastActionType: RecordActionType.Delete,
+                error: null
+        }
+
+        case RecordActionTypes.PostRecord:
+            return {
+                ...state,
+                lastActionType: RecordActionType.Post,
                 error: null
         }
 
@@ -34,7 +42,7 @@ export function RecordListReducer(state = recordInitialState, action: RecordList
         case RecordActionTypes.ResetLastActionType:
             return {
                 ...state,
-                lastActionType: '',
+                lastActionType: RecordActionType.None,
                 error: null
         }
 

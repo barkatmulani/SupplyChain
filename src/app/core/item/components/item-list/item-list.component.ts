@@ -1,15 +1,13 @@
 import { Component, OnInit, OnChanges, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Global } from '../../../../../global';
 import { ToastrService } from 'ngx-toastr';
 import { Store, select } from '@ngrx/store';
 import * as itemActions from '../../store/item.actions';
-import { ConfirmationComponent } from '../../../../shared/confirmation/confirmation.component';
 import { ItemSelectors } from '../../store/item.selectors'
 import { BaseListComponent } from '../../../base/base-list/base-list.component';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-
+import { ConfirmationService } from '../../../../services/confirmation.service';
 
 @Component({
   moduleId: module.id,
@@ -36,12 +34,11 @@ export class ItemListComponent extends BaseListComponent implements OnInit {
     filtering: {filterString: ''}
   };
 
-  @ViewChild('deleteconfirmation') deleteconfirmation: ConfirmationComponent;
-
   constructor(router: Router,
               route: ActivatedRoute,
               toastr: ToastrService,
-              store: Store) {
+              store: Store,
+              private confirmationService: ConfirmationService) {
     super(route, router, toastr, store, ItemSelectors);
   }
 
@@ -54,10 +51,6 @@ export class ItemListComponent extends BaseListComponent implements OnInit {
           return items;
       })
     );
-  }
-
-  ngOnDestroy() {
-    super.destroy();
   }
 
   public onCellClick(data: any): any {
@@ -81,8 +74,10 @@ export class ItemListComponent extends BaseListComponent implements OnInit {
         break;
 
       case 'D':
-        this.recordId = data.rowId;
-        this.deleteconfirmation.open();
+        let modal1 = this.confirmationService.openDeleteModal();
+        modal1.result.then(null, result => {
+          if(result) this.onDeleteConfirm(data.rowId);
+        });
         break;
     }
   }
@@ -95,26 +90,26 @@ export class ItemListComponent extends BaseListComponent implements OnInit {
     }
   }
 
-  public onAddClicked() {
+  onAddClicked() {
     if(this.navigationFlag)
       this.router.navigate([{ outlets: { primary: 'item' }, detail: null }]);
     else
       this.router.navigate([{ outlets: { detail: 'showItem' }}]);
   }
 
-  public onDeleteConfirm(id: number) {
-    this.store.dispatch(new itemActions.DeleteItem(this.recordId));
+  onDeleteConfirm(id: number) {
+    this.store.dispatch(new itemActions.DeleteItem(id));
   }
 
-  public onChangeTable(config: any) {
+  onChangeTable(config: any) {
 
   }
 
-  public onPageChanged(data: any) {
+  onPageChanged(data: any) {
     this.store.dispatch(new itemActions.SetPageNo(data.pageNo));
   }
 
-  public onRecordsPerPageChanged(data: number) {
+  onRecordsPerPageChanged(data: number) {
     this.store.dispatch(new itemActions.SetRecordsPerPage(data));
     this.store.dispatch(new itemActions.SetPageNo(1));
   }

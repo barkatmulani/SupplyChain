@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Event, NavigationStart, NavigationEnd, NavigationError, NavigationCancel, Router } from '@angular/router';
+import { Event, NavigationEnd, Router } from '@angular/router';
 import { slideInAnimation } from './app.animations';
 import { Store, select } from '@ngrx/store';
 import { Subscription } from 'rxjs';
@@ -10,6 +10,7 @@ import { filter } from 'rxjs/operators';
 import * as recordActions from './store/record.actions';
 import { LoadInventoryList } from './core/inventory/store/inventory.actions';
 import { LoadVendorList } from './core/vendor/store/vendor.actions';
+import { LoadPurchaseOrderList } from './core/purchaseorder/store/purchaseorder.actions';
 
 @Component({
   selector: 'app-root',
@@ -43,6 +44,7 @@ export class AppComponent implements OnInit {
     this.store.dispatch(new LoadItemList());
     this.store.dispatch(new LoadInventoryList());
     this.store.dispatch(new LoadVendorList());
+    this.store.dispatch(new LoadPurchaseOrderList());
 
     this.error$ = this.store.pipe(select(RecordSelectors.getError)).subscribe(
       (error: any) => {

@@ -1,0 +1,128 @@
+<header *ngIf="!isDisabled"></header>
+<form [formGroup]="frmMain">
+    <div class="panel panel-primary scms">
+        <div class="panel-heading">Manage Receipt</div>
+        <div class="panel-body">
+
+            <div class="row">
+                <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="form-group">
+                        <label class="">Receipt #</label>&nbsp;
+                        <input  class="form-control"
+                                [value]="receiptId || 'New Record'"
+                                type="text"
+                                disabled>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xs-12 col-sm-6">
+                    <div class="form-group">
+                        <label for="purchaseOrderId">Purchase Order</label>
+                        <ng-select  formControlName="purchaseOrderId"
+                                    class="control-label"
+                                    [clearable]="false"
+                                    bindValue="purchaseOrderId"
+                                    bindLabel="purchaseOrderId"
+                                    [items]="purchaseOrders$ | async"
+                                    (change)="onPurchaseOrderChanged($event)"
+                                    placeholder="Select Purchase Order">
+                        </ng-select>
+                    </div>
+                </div>
+
+                <div class="col-sm-12 col-md-6">
+                    <div class="form-group">
+                        <label for="vendorId" style="height: 18px;">Vendor</label>
+                        <ng-select  formControlName="vendorId"
+                                    class="control-label"
+                                    [clearable]="false"
+                                    bindValue="vendorId"
+                                    bindLabel="vendorName"
+                                    [items]="vendors$ | async"
+                                    placeholder="Select Vendor">
+                        </ng-select>
+                    </div>
+                </div>
+
+                <div class="col-sm-12 col-md-6">
+                    <div class="form-group">
+                        <label for="purchaseOrderTotal">PO Total</label>
+                        <input class="form-control" formControlName="purchaseOrderTotal" type="number">
+                    </div>
+                </div>
+
+                <div class="col-sm-12 col-md-6">
+                    <div class="form-group">
+                        <label for="purchaseOrderDate">PO Date</label>
+                        <input class="form-control" formControlName="purchaseOrderDate" type="date">
+                    </div>
+                </div>
+
+                <div class="col-sm-12 col-md-6">
+                    <div class="form-group">
+                        <label for="purchaseOrderDate">Est. Delivery Date</label>
+                        <input class="form-control" formControlName="estDeliveryDate" type="date">
+                    </div>
+                </div>
+
+                <div class="col-sm-12 col-md-6">
+                    <div class="form-group">
+                        <label for="inventoryId" style="height: 18px;">Receiving Inventory</label>
+                        <ng-select  formControlName="inventoryId"
+                                    class="control-label"
+                                    [items]="inventories$ | async"
+                                    [clearable]="false"
+                                    bindValue="inventoryId"
+                                    bindLabel="inventoryDescription"
+                                    placeholder="Select Inventory">
+                        </ng-select>
+                    </div>
+                </div>
+
+                <div class="col-sm-12 col-md-6">
+                    <div class="form-group">
+                        <label for="receiptDate">Receipt Date</label>
+                        <input class="form-control" formControlName="receiptDate" type="date">
+                    </div>
+                </div>
+
+                <div class="col-sm-12 col-md-6">
+                    <div class="form-group">
+                        <label for="shipmentCost">Extra Cost</label>
+                        <input class="form-control" formControlName="extraCost" type="number">
+                    </div>
+                </div>
+            </div>
+            
+            <div *ngIf="!isDisabled" class="col-sm-12">
+                <div class="pull-right gap-bottom">
+                    <button type="submit" class="btn btn-primary" (click)="onAddClicked()">Add Item</button>
+                </div>
+            </div>
+                
+            <div class="scrollable">
+                <div style="min-width: 500px">
+                    <datatable  #datatable
+                                [showFilterRow]="false"
+                                [allowEditing]="false"
+                                [allowAddition]="false"
+                                [allowReordering]="false"
+                                [showTotals]="false"
+                                [page]="pageNo"
+                                [disabled]="isDisabled"
+                                (addClicked)="onAddClicked()"
+                                (cellValueChanged)="onCellValueChanged($event)"
+                                (dropdownChanged)="onDropdownChanged($event)"
+                                (tableChanged)="onChangeTable(config)"
+                                (linkClicked)="onLinkClicked($event)"
+                                [tableData]="receiptItems" [columns]="columns">
+                    </datatable>
+                </div>
+            </div>
+
+            <command-panel *ngIf="!isDisabled" (save)="onSave()" (cancel)="onCancel()" [disabled]="frmMain.invalid || !frmMain.enabled || isDisabled || (!frmMain.dirty && !isTableDirty)"></command-panel>
+        </div>
+    </div>
+</form>
