@@ -4,7 +4,7 @@ import { Global } from '../../../../../global';
 import { ToastrService } from 'ngx-toastr';
 import { Store, select } from '@ngrx/store';
 import * as inventoryActions from '../../store/inventory.actions';
-import { inventorySelectors } from '../../store/inventory.selectors'
+import { InventorySelectors } from '../../store/inventory.selectors'
 import { BaseListComponent } from '../../../base/base-list/base-list.component';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
@@ -39,14 +39,14 @@ export class InventoryListComponent extends BaseListComponent implements OnInit 
               route: ActivatedRoute,
               toastr: ToastrService,
               store: Store,
-              private confirmationService: ConfirmationService) {
-    super(route, router, toastr, store, inventorySelectors);
+              confirmationService: ConfirmationService) {
+    super(route, router, toastr, store, confirmationService, InventorySelectors, inventoryActions);
   }
 
   ngOnInit() {
     Global.stripFromUrl(4);
 
-    this.rows$ = this.store.pipe(select(inventorySelectors.getInventories)).pipe(
+    this.rows$ = this.store.pipe(select(InventorySelectors.getInventories)).pipe(
       map((rows: any[]) => {
           const inventories = rows ? rows.map(inventory => ({...inventory, id: inventory.inventoryId })) : [];
           return inventories;
@@ -61,7 +61,7 @@ export class InventoryListComponent extends BaseListComponent implements OnInit 
     }
     else {
       this.store.dispatch(new inventoryActions.SelectInventory(data.selectedId));
-      this.router.navigate([{ outlets: { detail: ['showInventory', data.selectedId] }}]);
+      this.router.navigate([{ outlets: { detail: ['inventory', 'show', data.selectedId] }}]);
     }
   }
 
@@ -69,9 +69,9 @@ export class InventoryListComponent extends BaseListComponent implements OnInit 
     switch(data.name) {
       case 'E':
         if(this.navigationFlag)
-          this.router.navigate([{ outlets: { primary: ['inventory', data.rowId] }, detail: null }]);
+          this.router.navigate([{ outlets: { primary: ['inventory', 'edit', data.rowId] }, detail: null }]);
         else
-          this.router.navigate([{ outlets: { detail: ['showInventory', data.rowId] }}]);
+          this.router.navigate(['/inventory/view', { outlets: { detail: [data.rowId] }}]);
         break;
 
       case 'D':
@@ -83,35 +83,24 @@ export class InventoryListComponent extends BaseListComponent implements OnInit 
     }
   }
 
-  onSwitchToggle(value) {
-    this.store.dispatch(new inventoryActions.SetNavigationFlag(value));
-
-    if(this.navigationFlag) {
-      this.router.navigate([{ outlets: { detail: null }}]);
-    }
-  }
-
-  public onAddClicked() {
-    if(this.navigationFlag)
-      this.router.navigate([{ outlets: { primary: 'inventory' }, detail: null }]);
-    else
-      this.router.navigate([{ outlets: { detail: 'showInventory' }}]);
-  }
-
-  public onDeleteConfirm(id: number) {
+  onDeleteConfirm(id: number) {
     this.store.dispatch(new inventoryActions.DeleteInventory(id));
   }
 
-  public onChangeTable(config: any) {
-
-  }
-
-  public onPageChanged(data: any) {
+  onPageChanged(data: any) {
     this.store.dispatch(new inventoryActions.SetPageNo(data.pageNo));
   }
 
-  public onRecordsPerPageChanged(data: number) {
+  onRecordsPerPageChanged(data: number) {
     this.store.dispatch(new inventoryActions.SetRecordsPerPage(data));
     this.store.dispatch(new inventoryActions.SetPageNo(1));
+  }
+
+  public onSwitchToggle(value) {
+    super.switchToggle(value);
+  }
+
+  public onAddClicked() {
+    super.addClick('item');
   }
 }

@@ -41,9 +41,9 @@ export class ItemComponent extends BaseDetailComponent implements OnInit {
       cost: '',
       price: ''
     });
-    
+
     const id = this.route.snapshot.params.id;
-    
+
     this.route.data.subscribe(x => console.log(x));
 
     if (id) {
@@ -90,20 +90,13 @@ export class ItemComponent extends BaseDetailComponent implements OnInit {
       cost: this.frmMain.get('cost').value,
       price: this.frmMain.get('price').value
     };
-    
+
     if(item.itemId === 0) {
         this.store.dispatch(new itemActions.AddItem(item));
     }
     else {
         this.store.dispatch(new itemActions.SaveItem(item));
     }
-  }
-
-  onCancel() {
-    if(this.navigationFlag)
-      this.router.navigate([this.lastNavigationPath]);
-    else
-      this.router.navigate([{ outlets: { primary: this.lastNavigationPath, detail: null } }]);
   }
 
   get isDirty(): boolean {

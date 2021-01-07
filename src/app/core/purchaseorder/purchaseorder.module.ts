@@ -8,20 +8,34 @@ import { PurchaseOrderResolver } from "./components/purchaseorder-detail/purchas
 import { StoreModule } from "@ngrx/store";
 import { PurchaseOrderReducer } from "./store/purchaseorder.reducer";
 import { PurchaseOrderListResolver } from "./components/purchaseorder-list/purchaseorder-list.resolver";
-import { DirtyRecordGuard } from "../../guards/dirty-record-guard";
+import { DirtyRecordGuard } from "../../guards/dirty-record.guard";
 import { PurchaseOrderEffects } from './store/purchaseorder.effects';
 import { EffectsModule } from "@ngrx/effects";
+import { AuthModule } from "../../auth/auth.module";
+import { AuthGuard } from "../../auth/auth.guard";
+import { LayoutComponent } from "../layout/layout.component";
 
-const routes: Routes = [
-    { path: 'purchaseorders/:mode', component: PurchaseOrderListComponent, resolve: { resolvedPurchaseOrderList: PurchaseOrderListResolver } },
-    { path: 'purchaseorder/:id', component: PurchaseOrderComponent, resolve: { resolvedPurchaseOrder: PurchaseOrderResolver }, canDeactivate: [DirtyRecordGuard] },
-    { path: 'purchaseorder', pathMatch: "full", component: PurchaseOrderComponent, canDeactivate: [DirtyRecordGuard] },
-    { path: 'showpurchaseorder/:id', component: PurchaseOrderComponent, resolve: { resolvedPurchaseOrder: PurchaseOrderResolver }, outlet: 'detail', canDeactivate: [DirtyRecordGuard] },
-    { path: 'showpurchaseorder', pathMatch: "full", component: PurchaseOrderComponent, outlet: 'detail', canDeactivate: [DirtyRecordGuard] },
+const routes: Routes = [{
+    path: 'purchaseorder',
+    component: LayoutComponent,
+    canActivate: [AuthGuard],
+    children: [
+      { path: ':mode', canActivate: [AuthGuard], component: PurchaseOrderListComponent, resolve: { resolvedPurchaseOrderList: PurchaseOrderListResolver } },
+      { path: 'edit/:id', canActivate: [AuthGuard], component: PurchaseOrderComponent, resolve: { resolvedPurchaseOrder: PurchaseOrderResolver }, canDeactivate: [DirtyRecordGuard] },
+      { path: 'edit', canActivate: [AuthGuard], pathMatch: "full", component: PurchaseOrderComponent, canDeactivate: [DirtyRecordGuard] },
+      { path: 'view', canActivate: [AuthGuard], component: PurchaseOrderListComponent,
+          children: [
+            { path: ':id', component: PurchaseOrderComponent, resolve: { resolvedPurchaseOrder: PurchaseOrderResolver }, outlet: 'detail', canDeactivate: [DirtyRecordGuard] },
+            { path: '', pathMatch: 'full', component: PurchaseOrderComponent, outlet: 'detail', canDeactivate: [DirtyRecordGuard] }
+          ]
+      }
+    ]
+  }
 ];
 
 @NgModule({
     imports: [
+        AuthModule,
         SharedModule,
         RouterModule.forChild(routes),
         StoreModule.forFeature('purchaseOrder', PurchaseOrderReducer),

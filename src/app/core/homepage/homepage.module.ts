@@ -1,12 +1,17 @@
 import { NgModule } from "@angular/core";
 import { Routes, RouterModule } from "@angular/router";
+import { LayoutComponent } from "../layout/layout.component";
 import { HomepageComponent } from "./homepage.component";
 
 const routes: Routes = [
-    { path: 'homepage', component: HomepageComponent },
-    { path: '', redirectTo: 'homepage', pathMatch: 'full' }
-//  { path: '**', component: PageNotFoundComponent }
-
+  {
+    path: 'homepage',
+    component: LayoutComponent,
+    children: [
+      { path: '', component: HomepageComponent },
+  //  { path: '**', component: PageNotFoundComponent }
+    ]
+  }
 ];
 
 @NgModule({
@@ -14,9 +19,6 @@ const routes: Routes = [
         RouterModule.forChild(routes)
     ],
     declarations: [
-        HomepageComponent
-    ],
-    exports: [
         HomepageComponent
     ]
 })

@@ -41,8 +41,8 @@ export class VendorListComponent extends BaseListComponent implements OnInit {
               route: ActivatedRoute,
               toastr: ToastrService,
               store: Store,
-              private confirmationService: ConfirmationService) {
-    super(route, router, toastr, store, VendorSelectors);
+              confirmationService: ConfirmationService) {
+    super(route, router, toastr, store, confirmationService, VendorSelectors, vendorActions);
   }
 
   ngOnInit() {
@@ -55,7 +55,7 @@ export class VendorListComponent extends BaseListComponent implements OnInit {
       })
     );
   }
-  
+
   public onCellClick(data: any): any {
     if(!data.selectedId) {
       this.store.dispatch(new vendorActions.UnselectVendor());
@@ -63,7 +63,7 @@ export class VendorListComponent extends BaseListComponent implements OnInit {
     }
     else {
       this.store.dispatch(new vendorActions.SelectVendor(data.selectedId));
-      this.router.navigate([{ outlets: { detail: ['showVendor', data.selectedId] }}]);
+      this.router.navigate([{ outlets: { detail: ['vendor', 'show', data.selectedId] }}]);
     }
   }
 
@@ -71,9 +71,9 @@ export class VendorListComponent extends BaseListComponent implements OnInit {
     switch(data.name) {
       case 'E':
         if(this.navigationFlag)
-          this.router.navigate([{ outlets: { primary: ['vendor', data.rowId] }, detail: null }]);
+          this.router.navigate([{ outlets: { primary: ['vendor', 'edit', data.rowId] }, detail: null }]);
         else
-          this.router.navigate([{ outlets: { detail: ['showVendor', data.rowId] }}]);
+          this.router.navigate(['/vendor/view', { outlets: { detail: [data.rowId] }}]);
         break;
 
       case 'D':
@@ -85,36 +85,24 @@ export class VendorListComponent extends BaseListComponent implements OnInit {
     }
   }
 
-  onSwitchToggle(value) {
-    this.store.dispatch(new vendorActions.SetNavigationFlag(value));
-
-    if(this.navigationFlag) {
-      this.router.navigate([{ outlets: { detail: null }}]);
-    }
+  onDeleteConfirm(id: number) {
+    this.store.dispatch(new this.childSelectors.DeleteItem(id));
   }
 
-  public onAddClicked() {
-    if(this.navigationFlag)
-      this.router.navigate([{ outlets: { primary: 'vendor' }, detail: null }]);
-    else
-      this.router.navigate([{ outlets: { detail: 'showVendor' }}]);
-  }
-
-  public onDeleteConfirm(id: number) {
-    this.store.dispatch(new vendorActions.DeleteVendor(id));
-  }
-
-  public onChangeTable(config: any) {
-
-  }
-
-  public onPageChanged(data: any) {
+  onPageChanged(data: any) {
     this.store.dispatch(new vendorActions.SetPageNo(data.pageNo));
   }
 
-  public onRecordsPerPageChanged(data: number) {
+  onRecordsPerPageChanged(data: number) {
     this.store.dispatch(new vendorActions.SetRecordsPerPage(data));
     this.store.dispatch(new vendorActions.SetPageNo(1));
   }
+
+  public onSwitchToggle(value) {
+    super.switchToggle(value);
+  }
+
+  public onAddClicked() {
+    super.addClick('vendor');
+  }
 }
-  

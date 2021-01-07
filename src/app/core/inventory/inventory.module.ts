@@ -7,26 +7,40 @@ import { InventoryService } from "../../services/common.services";
 import { InventoryResolver } from "./components/inventory-detail/inventory-detail.resolver";
 import { StoreModule } from "@ngrx/store";
 import { InventoryReducer } from "./store/inventory.reducer";
-import { DirtyRecordGuard } from "../../guards/dirty-record-guard";
+import { DirtyRecordGuard } from "../../guards/dirty-record.guard";
 import { InventoryEffects } from './store/inventory.effects';
 import { EffectsModule } from "@ngrx/effects";
+import { LayoutComponent } from "../layout/layout.component";
+import { AuthModule } from "../../auth/auth.module";
+import { AuthGuard } from "../../auth/auth.guard";
 
-const routes: Routes = [
-    { path: 'inventories', component: InventoryListComponent },
-    { path: 'inventory/:id', component: InventoryComponent, resolve: { resolvedInventory: InventoryResolver }, canDeactivate: [DirtyRecordGuard] },
-    { path: 'inventory', pathMatch: "full", component: InventoryComponent, canDeactivate: [DirtyRecordGuard] },
-    { path: 'showInventory/:id', component: InventoryComponent, resolve: { resolvedInventory: InventoryResolver }, outlet: 'detail', canDeactivate: [DirtyRecordGuard] },
-    { path: 'showInventory', pathMatch: "full", component: InventoryComponent, outlet: 'detail', canDeactivate: [DirtyRecordGuard] },
+const routes: Routes = [{
+    path: 'inventory',
+    component: LayoutComponent,
+    canActivate: [AuthGuard],
+    children: [
+        { path: '', component: InventoryListComponent },
+        { path: 'edit/:id', component: InventoryComponent, resolve: { resolvedInventory: InventoryResolver }, canDeactivate: [DirtyRecordGuard] },
+        { path: 'edit', pathMatch: "full", component: InventoryComponent, canDeactivate: [DirtyRecordGuard] },
+        { path: 'view', component: InventoryListComponent,
+            children: [
+              { path: ':id', component: InventoryComponent, resolve: { resolvedInventory: InventoryResolver }, outlet: 'detail', canDeactivate: [DirtyRecordGuard] },
+              { path: '', pathMatch: 'full', component: InventoryComponent, outlet: 'detail', canDeactivate: [DirtyRecordGuard] }
+            ]
+        }
+      ]
+  }
 ];
 
 @NgModule({
     imports: [
+        AuthModule,
         SharedModule,
         RouterModule.forChild(routes),
         StoreModule.forFeature('inventory', InventoryReducer),
         EffectsModule.forFeature(
             [ InventoryEffects ]
-          ),
+        ),
     ],
     declarations: [
         InventoryComponent,

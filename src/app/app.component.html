@@ -1,22 +1,9 @@
-<br />
-<div class="container">
-  <div class="row">
-      <div class="col-sm-12 col-lg-3">
-          <mainmenu-container class="hidden-xs"></mainmenu-container>
-      </div>
+<div [@slideInAnimation]="o.isActivated ? o.activatedRoute : ''">
+    <router-outlet #o="outlet"></router-outlet>
 
-      <div class="col-sm-12 col-lg-9" [@slideInAnimation]="o.isActivated ? o.activatedRoute : ''">
-          <router-outlet #o="outlet"></router-outlet>
-
-          <div class="bg-primary">
-            <router-outlet name="detail"></router-outlet>
-          </div>
-
-          <div *ngIf="loading" class="spincontainer">
-            <span class="fa fa-spinner spinner"></span>
-          </div>
-      </div>
-  </div>
+    <div *ngIf="loading" class="spincontainer">
+      <span class="fa fa-spinner spinner"></span>
+    </div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/5.1.0/firebase.js"></script>

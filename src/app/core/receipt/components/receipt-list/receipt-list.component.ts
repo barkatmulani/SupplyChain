@@ -6,7 +6,7 @@ import { ConfirmationService } from '../../../../services/confirmation.service';
 import { BaseListComponent } from '../../../base/base-list/base-list.component';
 import { Store, select } from '@ngrx/store';
 import { ReceiptSelectors } from '../../store/receipt.selectors';
-import { DeleteReceipt, PostReceipt, LoadReceipt } from '../../store/receipt.actions';
+import * as receiptActions from '../../store/receipt.actions';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ReceiptComponent } from '../receipt-detail/receipt-detail.component';
@@ -38,16 +38,16 @@ export class ReceiptListComponent extends BaseListComponent implements OnInit {
               public router: Router,
               public toastr: ToastrService,
               public store: Store,
-              private modalService: NgbModal,
-              private confirmationService: ConfirmationService) {
-      super(route, router, toastr, store, ReceiptSelectors);
+              public confirmationService: ConfirmationService,
+              private modalService: NgbModal) {
+      super(route, router, toastr, store, confirmationService, ReceiptSelectors, receiptActions);
   }
 
   ngOnInit(): void {
     this.route.data.subscribe(data => {
       let count = data.resolvedReceiptList.count;
       console.log(count)
-        
+
       this.mode = this.route.snapshot.params.mode;
 
       this.columns = [
@@ -91,7 +91,7 @@ export class ReceiptListComponent extends BaseListComponent implements OnInit {
         });
         break;
       case 'V':
-        this.store.dispatch(new LoadReceipt(data.rowId));
+        this.store.dispatch(new receiptActions.LoadReceipt(data.rowId));
         let comp = this.modalService.open(ReceiptComponent);
         comp.componentInstance.isDisabled = true;
         break;
@@ -103,11 +103,11 @@ export class ReceiptListComponent extends BaseListComponent implements OnInit {
   }
 
   public onDeleteConfirm(id: number) {
-    this.store.dispatch(new DeleteReceipt(id));
+    this.store.dispatch(new receiptActions.DeleteReceipt(id));
   }
 
   public onPostConfirm(id: number) {
-    this.store.dispatch(new PostReceipt(id));
+    this.store.dispatch(new receiptActions.PostReceipt(id));
   }
 
   public onChangeTable(config: any) {

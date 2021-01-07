@@ -42,16 +42,16 @@ export class PurchaseOrderListComponent extends BaseListComponent implements OnI
               public router: Router,
               public toastr: ToastrService,
               public store: Store,
-              private modalService: NgbModal,
-              private confirmationService: ConfirmationService) {
-    super(route, router, toastr, store, PurchaseOrderSelectors);
+              public confirmationService: ConfirmationService,
+              private modalService: NgbModal) {
+    super(route, router, toastr, store, confirmationService, PurchaseOrderSelectors, purchaseOrderActions);
   }
 
   ngOnInit(): void {
     this.route.data.subscribe(data => {
       let count = data.resolvedPurchaseOrderList.count;
       console.log(count)
-      
+
       this.mode = this.route.snapshot.params.mode;
 
       this.columns = [
@@ -83,7 +83,7 @@ export class PurchaseOrderListComponent extends BaseListComponent implements OnI
 
     switch(data.name) {
       case 'E':
-        this.router.navigate(['purchaseorder', this.purchaseOrderId]);
+        this.router.navigate(['purchaseorder', 'edit', this.purchaseOrderId]);
         break;
       case 'D':
         let modal1 = this.confirmationService.openDeleteModal();

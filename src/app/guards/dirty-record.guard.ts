@@ -41,7 +41,7 @@ export class DirtyRecordGuard implements CanDeactivate<IBaseDetailComponent> {
 
         if(component.isDirty && !this.recordUpdatedFlag) {
             let result = component.confirmChangeLoss();
-            
+
             return result;
         }
         else {

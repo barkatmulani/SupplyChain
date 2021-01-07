@@ -9,7 +9,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Global } from '../../../../../global';
 import { Store, select } from '@ngrx/store';
 import * as inventoryActions from '../../store/inventory.actions';
-import { inventorySelectors } from '../../store/inventory.selectors';
+import { InventorySelectors } from '../../store/inventory.selectors';
 import { ItemSelectors } from '../../../item/store/item.selectors';
 
 @Component({
@@ -32,7 +32,7 @@ export class InventoryComponent extends BaseDetailComponent implements OnInit {
               public modalService: NgbModal,
               public store: Store)
   {
-    super(router, toastr, store, modalService, inventorySelectors);
+    super(router, toastr, store, modalService, InventorySelectors);
   }
 
   ngOnInit() {
@@ -41,7 +41,7 @@ export class InventoryComponent extends BaseDetailComponent implements OnInit {
       inventoryDescription: ['', Validators.required],
       address: '',
     });
-    
+
     this.columns = [
       { title: 'Inventory Item Id', name: 'inventoryItemId', hidden: true }, // 0
       //{ title: 'Item', name: 'itemId', itemsProp: 'itemList', width: "200px", disabled: false }, // 1
@@ -52,7 +52,7 @@ export class InventoryComponent extends BaseDetailComponent implements OnInit {
     ];
 
     const id = this.route.snapshot.params.id;
-    
+
     if (id) {
       this.data$ = this.route.data.pipe(
         map(data => (data.resolvedInventory)),
@@ -70,8 +70,8 @@ export class InventoryComponent extends BaseDetailComponent implements OnInit {
       this.data$ = of({});
     }
 
-    this.onError$ = this.store.pipe(select(inventorySelectors.error)).subscribe(
-      error => {
+    this.onError$ = this.store.pipe(select(InventorySelectors.error)).subscribe(
+      (error: any) => {
           if(error) this.toastr.error(error.message, 'Error!');
       }
     );
@@ -110,20 +110,13 @@ export class InventoryComponent extends BaseDetailComponent implements OnInit {
       inventoryDescription: this.frmMain.get('inventoryDescription').value,
       address: this.frmMain.get('address').value
     };
-    
+
     if(inventory.inventoryId === 0) {
       this.store.dispatch(new inventoryActions.AddInventory(inventory));
     }
     else {
       this.store.dispatch(new inventoryActions.SaveInventory(inventory));
     }
-  }
-
-  onCancel() {
-    if(this.navigationFlag)
-      this.router.navigate([this.lastNavigationPath]);
-    else
-      this.router.navigate([{ outlets: { primary: this.lastNavigationPath, detail: null } }]);
   }
 
   get isDirty(): boolean {

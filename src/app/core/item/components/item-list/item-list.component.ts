@@ -38,8 +38,8 @@ export class ItemListComponent extends BaseListComponent implements OnInit {
               route: ActivatedRoute,
               toastr: ToastrService,
               store: Store,
-              private confirmationService: ConfirmationService) {
-    super(route, router, toastr, store, ItemSelectors);
+              confirmationService: ConfirmationService) {
+    super(route, router, toastr, store, confirmationService, ItemSelectors, itemActions);
   }
 
   ngOnInit() {
@@ -60,7 +60,7 @@ export class ItemListComponent extends BaseListComponent implements OnInit {
     }
     else {
       this.store.dispatch(new itemActions.SelectItem(data.selectedId));
-      this.router.navigate([{ outlets: { detail: ['showItem', data.selectedId] }}]);
+      this.router.navigate([{ outlets: { detail: ['item', 'show', data.selectedId] }}]);
     }
   }
 
@@ -68,9 +68,9 @@ export class ItemListComponent extends BaseListComponent implements OnInit {
     switch(data.name) {
       case 'E':
         if(this.navigationFlag)
-          this.router.navigate([{ outlets: { primary: ['item', data.rowId] }, detail: null }]);
+          this.router.navigate([{ outlets: { primary: ['item', 'edit', data.rowId] }, detail: null }]);
         else
-          this.router.navigate([{ outlets: { detail: ['showItem', data.rowId] }}]);
+          this.router.navigate(['/item/view', { outlets: { detail: [data.rowId] }}]);
         break;
 
       case 'D':
@@ -82,27 +82,8 @@ export class ItemListComponent extends BaseListComponent implements OnInit {
     }
   }
 
-  onSwitchToggle(value) {
-    this.store.dispatch(new itemActions.SetNavigationFlag(value));
-
-    if(this.navigationFlag) {
-      this.router.navigate([{ outlets: { detail: null }}]);
-    }
-  }
-
-  onAddClicked() {
-    if(this.navigationFlag)
-      this.router.navigate([{ outlets: { primary: 'item' }, detail: null }]);
-    else
-      this.router.navigate([{ outlets: { detail: 'showItem' }}]);
-  }
-
   onDeleteConfirm(id: number) {
     this.store.dispatch(new itemActions.DeleteItem(id));
-  }
-
-  onChangeTable(config: any) {
-
   }
 
   onPageChanged(data: any) {
@@ -112,5 +93,13 @@ export class ItemListComponent extends BaseListComponent implements OnInit {
   onRecordsPerPageChanged(data: number) {
     this.store.dispatch(new itemActions.SetRecordsPerPage(data));
     this.store.dispatch(new itemActions.SetPageNo(1));
+  }
+
+  public onSwitchToggle(value) {
+    super.switchToggle(value);
+  }
+
+  public onAddClicked() {
+    super.addClick('item');
   }
 }

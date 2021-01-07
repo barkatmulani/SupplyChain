@@ -13,9 +13,7 @@ import { Global, RecordActionType } from "../../../../global";
     templateUrl: 'base-detail.component.html'
 })
 export class BaseDetailComponent implements IBaseDetailComponent {
-    lastNavigationPath$: Subscription;
-    lastActionType$: Subscription;
-    navigationFlag$: Subscription;
+    subscriptions: Subscription[] = [];
     height: number;
 
     isDirty: boolean;
@@ -28,20 +26,21 @@ export class BaseDetailComponent implements IBaseDetailComponent {
                 public store: Store,
                 public modalService: NgbModal,
                 public childSelectors: any) {
-                    
+
         this.height = window.outerHeight;
 
-        this.lastNavigationPath$ = this.store.pipe(select(RecordSelectors.getLastNavigationPath)).subscribe(
+        this.subscriptions.push(this.store.pipe(select(RecordSelectors.getLastNavigationPath)).subscribe(
             (path: string) => {
                 console.log(path);
                 this.lastNavigationPath = path;
             }
-        )
+        ));
 
-        this.navigationFlag$ = this.store.pipe(select(this.childSelectors.navigationFlag))
-            .subscribe((navigationFlag: boolean) => this.navigationFlag = navigationFlag);
-        
-        this.lastActionType$ = this.store.pipe(select(RecordSelectors.getLastActionType)).subscribe(
+        this.subscriptions.push(this.store.pipe(select(this.childSelectors.navigationFlag))
+            .subscribe((navigationFlag: boolean) => this.navigationFlag = navigationFlag)
+        );
+
+        this.subscriptions.push(this.store.pipe(select(RecordSelectors.getLastActionType)).subscribe(
             (type: string) => {
                 if (type && type !== RecordActionType.Delete && type !== RecordActionType.Post) {
                     this.store.dispatch(new recordActions.ResetLastActionType());
@@ -53,34 +52,43 @@ export class BaseDetailComponent implements IBaseDetailComponent {
                         this.router.navigate([{ outlets: { primary: this.lastNavigationPath, detail: null } }]);
                 }
             }
-        );
+        ));
     }
-    
+
     ngAfterViewInit() {
-        this.navigationFlag$ = this.store.pipe(select(this.childSelectors.navigationFlag)).subscribe(
+        this.subscriptions.push(this.store.pipe(select(this.childSelectors.navigationFlag)).subscribe(
             flag => {
                 if(!flag) {
                     window.scrollBy(0, this.height);
                 }
             }
-        );
+        ));
     }
-    
+
     ngOnDestroy() {
-        if(this.lastNavigationPath$) this.lastNavigationPath$.unsubscribe();
-        if(this.navigationFlag$) this.navigationFlag$.unsubscribe();
-        if(this.lastActionType$) this.lastActionType$.unsubscribe();
+        this.subscriptions.forEach(sub => sub.unsubscribe);
     }
-    
+
     async confirmChangeLoss() {
         const modalRef = this.modalService.open(SubComponent);
 
         modalRef.componentInstance.message = 'Changes will be lost. Are you sure?';
-        
+
         return modalRef.result.then(() => {
             Global.showNotification('C', this.toastr);
             return true
         }, () => false);
+    }
+
+    onCancel() {
+      if(this.navigationFlag) {
+        this.router.navigate([this.lastNavigationPath]);
+      }
+      else {
+        this.router.navigate([{ outlets: { primary: this.lastNavigationPath, detail: null } }]);
+      }
+
+      this.toastr.warning('Record editing cancelled.', 'Warning');
     }
 
     handleError(data) {

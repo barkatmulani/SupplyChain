@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
- 
+
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { TableComponent } from './datatable/table.component';
 import { NgTableComponent } from './datatable/table/ng-table.component';

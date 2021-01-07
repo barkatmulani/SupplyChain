@@ -12,7 +12,6 @@ import { HeaderComponent } from './core/header/header.component';
 
 import { MainMenuComponent } from './core/mainmenu/mainmenu.component';
 import { MainMenuContainerComponent } from './core/mainmenu-container/mainmenu-container.component';
-import { HomepageModule } from './core/homepage/homepage.module';
 import { ItemModule } from './core/item/item.module';
 import { AppRoutingModule } from './app.routing.module';
 import { AppComponent } from './app.component';
@@ -21,10 +20,16 @@ import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools'
 import { environment } from '../environments/environment';
 import { SharedModule } from './shared/shared.module';
-import { DirtyRecordGuard } from './guards/dirty-record-guard';
+import { DirtyRecordGuard } from './guards/dirty-record.guard';
 import { BaseDetailComponent } from './core/base/base-detail/base-detail.component';
 import { EffectsModule } from '@ngrx/effects';
 import { RecordListReducer } from './store/record.reducer';
+import { AuthModule } from './auth/auth.module';
+import { LayoutComponent } from './core/layout/layout.component';
+import { MetaReducer } from "@ngrx/store";
+import { hydrationMetaReducer } from "./store/hydration.reducer";
+
+export const metaReducers: MetaReducer[] = [hydrationMetaReducer];
 
 @NgModule({
   declarations: [
@@ -32,25 +37,30 @@ import { RecordListReducer } from './store/record.reducer';
     MainMenuComponent,
     MainMenuContainerComponent,
     HeaderComponent,
-    BaseDetailComponent
+    BaseDetailComponent,
+    LayoutComponent
   ],
   imports: [
     FormsModule,
     //PaginationModule,
     CommonModule,
     BrowserAnimationsModule,
-    ToastrModule.forRoot(),
+    ToastrModule.forRoot({
+      maxOpened: 1,
+      preventDuplicates: true,
+      autoDismiss: true
+    }),
     PipesModule,
     BrowserModule,
     HttpClientModule,
     ReactiveFormsModule,
-    HomepageModule,
     ItemModule,
     AppRoutingModule,
     NgbModule,
     SharedModule,
     PipesModule,
-    StoreModule.forRoot({ base: RecordListReducer }),
+    AuthModule,
+    StoreModule.forRoot({ base: RecordListReducer }, { metaReducers }),
     EffectsModule.forRoot([]),
     StoreDevtoolsModule.instrument({
       name: 'SCMS DevTools',

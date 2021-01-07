@@ -3,7 +3,7 @@ import { InventoryListState } from ".";
 
 export const inventorySelector = createFeatureSelector<InventoryListState>('inventory');
 
-export class inventorySelectors {
+export class InventorySelectors {
     static getPageNo = createSelector(
         inventorySelector,
         state => state.pageNo

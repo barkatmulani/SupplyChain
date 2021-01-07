@@ -41,9 +41,9 @@ export class VendorComponent extends BaseDetailComponent implements OnInit {
       address: '',
       phoneNo: ''
     });
-    
+
     const id = this.route.snapshot.params.id;
-    
+
     if (id) {
       this.data$ = this.route.data.pipe(
         map(data => (data.resolvedVendor)),
@@ -93,17 +93,13 @@ export class VendorComponent extends BaseDetailComponent implements OnInit {
         'Authorization': 'my-auth-token',
         'Access-Control-Allow-Origin': '*'
       })};
-    
+
       if(vendor.vendorId === 0) {
         this.store.dispatch(new vendorActions.AddVendor(vendor));
     }
     else {
         this.store.dispatch(new vendorActions.SaveVendor(vendor));
     }
-  }
-
-  onCancel() {
-    this.router.navigate([{ outlets: { primary: 'vendors', detail: null }}]);
   }
 
   get isDirty(): boolean {

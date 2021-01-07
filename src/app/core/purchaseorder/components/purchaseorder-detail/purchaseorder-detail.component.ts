@@ -5,7 +5,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Status, Global } from '../../../../../global';
 import { TableComponent } from '../../../../shared/datatable/table.component';
 import { Store, select } from '@ngrx/store';
-import { inventorySelectors } from '../../../inventory/store/inventory.selectors';
+import { InventorySelectors } from '../../../inventory/store/inventory.selectors';
 import { Observable, Subscription } from 'rxjs';
 import { ItemSelectors } from '../../../item/store/item.selectors';
 import { Vendor } from '../../../../models/Vendor.model';
@@ -118,11 +118,11 @@ export class PurchaseOrderComponent extends BaseDetailComponent implements OnIni
                     : [];
         this.columns.find(x => x.name === 'itemId').items = this.items;
     });
-    
+
         // console.log(items ? items.length : 0, data);
         // this.cd.markForCheck();
         // this.cd.reattach();
-    
+
     // this.data$.pipe(
     //   switchMap((data) => this.items$,
     //     (data, items) => {
@@ -135,7 +135,7 @@ export class PurchaseOrderComponent extends BaseDetailComponent implements OnIni
     //       if(data) this.loadData(data);
     //       this.purchaseOrder = data;
     //       this.columns.find(x => x.name === 'itemId').items = this.items;
-    //       this.pOItems = this.purchaseOrder && this.purchaseOrder.purchaseOrderItem 
+    //       this.pOItems = this.purchaseOrder && this.purchaseOrder.purchaseOrderItem
     //                     ? this.purchaseOrder.purchaseOrderItem.map(x => ({...x}))
     //                     : [];
 
@@ -170,7 +170,7 @@ export class PurchaseOrderComponent extends BaseDetailComponent implements OnIni
       this.purchaseOrderId = data.purchaseOrderId;
       this.isDisabled = true;
     }
-    
+
     this.pOItems = data.purchaseOrderItem
                   ? data.purchaseOrderItem.map(x => ({...x}))
                   : [];
@@ -184,7 +184,7 @@ export class PurchaseOrderComponent extends BaseDetailComponent implements OnIni
   }
 
   loadDropdowns() {
-    this.inventories$ = this.store.pipe(select(inventorySelectors.getInventories));
+    this.inventories$ = this.store.pipe(select(InventorySelectors.getInventories));
     this.vendors$ = this.store.pipe(select(VendorSelectors.getVendors));
   }
 
@@ -213,10 +213,6 @@ export class PurchaseOrderComponent extends BaseDetailComponent implements OnIni
       this.store.dispatch(new AddPurchaseOrder(purchaseOrder));
     else
       this.store.dispatch(new SavePurchaseOrder(purchaseOrder));
-  }
-
-  onCancel() {
-    this.router.navigate([this.lastNavigationPath]);
   }
 
   onClose() {

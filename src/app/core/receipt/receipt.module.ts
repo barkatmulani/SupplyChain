@@ -8,20 +8,34 @@ import { ReceiptResolver } from "./components/receipt-detail/receipt-detail.reso
 import { StoreModule } from "@ngrx/store";
 import { ReceiptReducer } from "./store/receipt.reducer";
 import { ReceiptListResolver } from "./components/receipt-list/receipt-list.resolver";
-import { DirtyRecordGuard } from "../../guards/dirty-record-guard";
+import { DirtyRecordGuard } from "../../guards/dirty-record.guard";
 import { ReceiptEffects } from './store/receipt.effects';
 import { EffectsModule } from "@ngrx/effects";
+import { AuthModule } from "../../auth/auth.module";
+import { AuthGuard } from "../../auth/auth.guard";
+import { LayoutComponent } from "../layout/layout.component";
 
-const routes: Routes = [
-    { path: 'receipts/:mode', component: ReceiptListComponent, resolve: { resolvedReceiptList: ReceiptListResolver } },
-    { path: 'receipt/:id', component: ReceiptComponent, resolve: { resolvedReceipt: ReceiptResolver }, canDeactivate: [DirtyRecordGuard] },
-    { path: 'receipt', pathMatch: "full", component: ReceiptComponent, resolve: { resolvedReceipt: ReceiptResolver }, canDeactivate: [DirtyRecordGuard] },
-    { path: 'showreceipt/:id', component: ReceiptComponent, resolve: { resolvedReceipt: ReceiptResolver }, outlet: 'detail', canDeactivate: [DirtyRecordGuard] },
-    { path: 'showreceipt', pathMatch: "full", component: ReceiptComponent, outlet: 'detail', canDeactivate: [DirtyRecordGuard] },
+const routes: Routes = [{
+    path: 'receipt',
+    component: LayoutComponent,
+    canActivate: [AuthGuard],
+    children: [
+        { path: ':mode', component: ReceiptListComponent, resolve: { resolvedReceiptList: ReceiptListResolver } },
+        { path: 'edit/:id', component: ReceiptComponent, resolve: { resolvedReceipt: ReceiptResolver }, canDeactivate: [DirtyRecordGuard] },
+        { path: 'edit', pathMatch: "full", component: ReceiptComponent, resolve: { resolvedReceipt: ReceiptResolver }, canDeactivate: [DirtyRecordGuard] },
+        { path: 'view', component: ReceiptListComponent,
+            children: [
+              { path: ':id', component: ReceiptComponent, resolve: { resolvedReceipt: ReceiptListResolver }, outlet: 'detail', canDeactivate: [DirtyRecordGuard] },
+              { path: '', pathMatch: 'full', component: ReceiptComponent, outlet: 'detail', canDeactivate: [DirtyRecordGuard] }
+            ]
+        }
+    ]
+  }
 ];
 
 @NgModule({
     imports: [
+        AuthModule,
         SharedModule,
         RouterModule.forChild(routes),
         StoreModule.forFeature('receipt', ReceiptReducer),

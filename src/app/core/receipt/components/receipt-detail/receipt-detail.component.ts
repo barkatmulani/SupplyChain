@@ -15,7 +15,7 @@ import { Subscription, Observable, EMPTY } from 'rxjs';
 import { Inventory } from '../../../../models/inventory.model';
 import { ItemSelectors } from '../../../item/store/item.selectors';
 import { Vendor } from '../../../../models/Vendor.model';
-import { inventorySelectors } from '../../../inventory/store/inventory.selectors';
+import { InventorySelectors } from '../../../inventory/store/inventory.selectors';
 import { VendorSelectors } from '../../../vendor/store/vendor.selectors';
 import { SaveReceipt, AddReceipt } from '../../store/receipt.actions';
 import { Receipt } from '../../../../models/receipt.model';
@@ -31,11 +31,11 @@ import { PurchaseOrderSelectors } from '../../../purchaseorder/store/purchaseOrd
 
 export class ReceiptComponent extends BaseDetailComponent implements OnInit {
   @Input() isDisabled: boolean = false;
-  
+
   @Output() close: EventEmitter<any> = new EventEmitter();
 
   @ViewChild('datatable') datatable: TableComponent;
-    
+
   data$: Subscription;
   items$: Subscription;
   purchaseOrder$: Subscription;
@@ -44,7 +44,7 @@ export class ReceiptComponent extends BaseDetailComponent implements OnInit {
   purchaseOrders$: Observable<PurchaseOrder[]>;
   inventories$: Observable<Inventory[]>;
   vendors$: Observable<Vendor[]>;
-  
+
   receiptId: number;
   frmMain: FormGroup;
 
@@ -126,7 +126,7 @@ export class ReceiptComponent extends BaseDetailComponent implements OnInit {
 
   loadDropdowns() {
     this.purchaseOrders$ = this.store.pipe(select(PurchaseOrderSelectors.getPurchaseOrders));
-    this.inventories$ = this.store.pipe(select(inventorySelectors.getInventories));
+    this.inventories$ = this.store.pipe(select(InventorySelectors.getInventories));
     this.vendors$ = this.store.pipe(select(VendorSelectors.getVendors));
   }
 
@@ -173,7 +173,7 @@ export class ReceiptComponent extends BaseDetailComponent implements OnInit {
 
       receiptTotal += x.totalCost;
     });
-    
+
     let receipt: Receipt = {
       receiptId: receiptId,
       receiptDate: this.frmMain.get('receiptDate').value,
@@ -192,10 +192,6 @@ export class ReceiptComponent extends BaseDetailComponent implements OnInit {
       this.store.dispatch(new AddReceipt(receipt));
     else
       this.store.dispatch(new SaveReceipt(receipt));
-  }
-
-  onCancel() {
-    this.router.navigate([this.lastNavigationPath]);
   }
 
   onAddClicked() {
@@ -222,7 +218,7 @@ export class ReceiptComponent extends BaseDetailComponent implements OnInit {
 
   onDropdownChanged(data: any) {
     let row = this.receiptItems[data.rowNo];
-    
+
     if(data.columnName === 'itemId') {
       this.fillItemDetails(data.id, row);
     }

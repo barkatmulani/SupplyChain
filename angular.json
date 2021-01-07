@@ -103,7 +103,7 @@
       }
     },
     "supplychain-e2e": {
-      "root": "",
+      "root": "e2e",
       "sourceRoot": "e2e",
       "projectType": "application",
       "architect": {
@@ -137,5 +137,8 @@
     "@schematics/angular:directive": {
       "prefix": "app"
     }
+  },
+  "cli": {
+    "analytics": false
   }
 }

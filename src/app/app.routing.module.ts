@@ -9,10 +9,24 @@ import { InventoryModule } from './core/inventory/inventory.module';
 import { VendorModule } from './core/vendor/vendor.module';
 import { PurchaseOrderModule } from './core/purchaseorder/purchaseorder.module';
 import { ReceiptModule } from './core/receipt/receipt.module';
+import { AuthGuard } from './auth/auth.guard';
+import { AuthModule } from './auth/auth.module';
+import { LayoutComponent } from './core/layout/layout.component';
+
+const routes: Routes = [
+  { path: '', pathMatch: 'full', redirectTo: 'homepage' },
+  {
+    path: '**',
+    canActivate: [AuthGuard],
+    component: LayoutComponent
+  }
+//  { path: '**', component: PageNotFoundComponent }
+];
 
 @NgModule({
   imports: [
-    HomepageModule,
+    AuthModule,
+    RouterModule.forChild(routes),
     ItemModule,
     InventoryModule,
     VendorModule,
@@ -24,8 +38,7 @@ import { ReceiptModule } from './core/receipt/receipt.module';
     ),
   ],
   exports: [
-    RouterModule,
-    HomepageModule
+    RouterModule
   ]
 })
 
