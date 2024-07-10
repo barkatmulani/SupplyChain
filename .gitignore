@@ -40,14 +40,13 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
-api/packages/
+packages/
 *.ppk
-api/SCMS.API/obj/
-api/SCMS.API/Properties/
-api/SCMS.DB/bin/
-api/SCMS.DB/obj/
-api/SCMS.DB1/bin/
-api/SCMS.DB1/
-api/SCMS.API/bin/
-api/SCMS.Test/obj/
-api/.vs/
+SupplyChain.API/SCMS.API/obj/
+SupplyChain.API/SCMS.API/Properties/
+SupplyChain.API/SCMS.DB/bin/
+SupplyChain.API/SCMS.DB/obj/
+SupplyChain.API/SCMS.API/bin/
+SupplyChain.API/SCMS.Test/bin/
+SupplyChain.API/SCMS.Test/obj/
+.vs/
