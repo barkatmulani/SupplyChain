@@ -1,0 +1,48 @@
+<div class="panel panel-primary scms">
+    <div class="panel-heading">Vendors</div>
+    <div class="panel-body">
+        <div class="row my-3">
+            <div class="col-sm-8">
+                <cm-switch  [label]="'Open details in new page'"
+                            [selected]="navigationFlag"
+                            (onToggle)="onSwitchToggle($event)"
+                >
+                </cm-switch>
+            </div>
+
+            <div class="col-sm-4 text-right">
+                <button type="submit" class="btn btn-success" (click)="onAddClicked()">
+                    <i class="fas fa-plus-circle"></i>
+                    Add New
+                </button>
+            </div>
+        </div>
+
+        <div class="scrollable" *ngIf="rows$ | async; else spinner">
+            <datatable #datatable
+                    [showFilterRow]="false"
+                    [allowEditing]="false"
+                    [allowReordering]="false"
+                    [hasData]="hasData"
+                    [tableData]="(rows$ | async) || []"
+                    [allowSelection]="false"
+                    [columns]="columns"
+                    [page]="(pageNo$ | async) || 1"
+                    [recordsPerPage]="(recordsPerPage$ | async) || 0"
+                    (pageChanged)="onPageChanged($event)"
+                    (linkClicked)="onLinkClicked($event)"
+                    (cellClicked)="onCellClick($event)"
+                    (recordsPerPageChanged)="onRecordsPerPageChanged($event)"
+            >
+            </datatable>
+        </div>
+    </div>
+</div>
+
+<div class="bg-primary">
+  <router-outlet name="detail"></router-outlet>
+</div>
+
+<ng-template #spinner>
+    <loadingspinner #spinner></loadingspinner>
+</ng-template>

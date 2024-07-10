@@ -1,0 +1,21 @@
+<div class="border border-neutral-400">
+    <div class="{{'font-sans text-sm py-2 font-semibold rounded-sm px-2 '
+        + (mainPanel
+            ? 'bg-neutral-100 text-blue-600'
+            : 'bg-panelheading text-white')
+        + class}}"
+    >
+        @if(headingUrl) {
+            <a href={{headingUrl}} class="hover:no-underline">
+                {{heading}}
+            </a>
+        }
+        @else {
+            <span>{{heading}}</span>
+        }
+    </div>
+    <div class="px-4 py-2">
+        <ng-content>
+        </ng-content>
+    </div>
+</div>
